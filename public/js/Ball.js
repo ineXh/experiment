@@ -15,7 +15,7 @@ Ball.prototype = {
 		this.pos.y = y;
 		this.maxSpeed = context.canvas.width/20;
 		this.clr = getRndColor();
-		console.log(this.clr)
+		//console.log(this.clr)
 	},
 	update: function(){
 		this.move();

@@ -22,23 +22,37 @@ function getDim(w1, h1){
 }
 
 (function(){
-    renderer = new PIXI.WebGLRenderer(800, 800, {backgroundColor : 0x59b4ff, transparent : false, antialias: false});
+    //renderer = new PIXI.WebGLRenderer(800, 800, {backgroundColor : 0x59b4ff, transparent : false, antialias: false});
+    renderer = PIXI.autoDetectRenderer(800, 800 ,{backgroundColor : 0x59b4ff, antialias: false});//LightCyan});//'Black'});GrassColor 0x4F8EDB
 	var canvas1 = document.getElementById("canvas1");
 	canvas1.appendChild(renderer.view);
-    stage0 = new PIXI.Container();	
+    stage0 = new PIXI.Container();
 	
     var initialize = function(load, res){
         loader = load;
         resources = res;
 		
-		canvas = document.createElement('canvas');
+        
+        renderer2 = new PIXI.CanvasRenderer(canvasWidth, canvasHeight, {transparent : true, antialias: false})
+        //PIXI.autoDetectRenderer(canvasWidth, canvasHeight, canvas);
+        document.body.appendChild(renderer2.view);
+        stage2 = new PIXI.Container();
+
+		canvas = renderer2.view;
+        //canvas = document.createElement('canvas');
         canvas.width = canvasWidth;
         canvas.height = canvasHeight;
 		ctx = canvas.getContext('2d');
+        //ctx = canvas.getContext('webgl', { antialias: false, depth: false });
 		div = document.getElementById("canvas1"); 
 		div.appendChild(canvas);
         canvas.addEventListener("mousedown", mouseDownListener, false);
         canvas.addEventListener("touchstart", touchDownListener, false);
+
+
+
+        //debugger;
+
 
         updateQueue = new UpdateQueue();
 
@@ -49,6 +63,10 @@ function getDim(w1, h1){
         sprite.y = 50;
         //sprite.scale.set(this.scale);
         stage0.addChild(sprite);
+        sprite2 = buttonCreate(resources.bunny.texture, 0, 0, 30);            
+        sprite2.x = 50;
+        sprite2.y = 50;
+        stage2.addChild(sprite2);
         //balls.push(new Ball());
 
         animate();
@@ -65,11 +83,12 @@ function getDim(w1, h1){
     function animate() {
         update();
         requestAnimationFrame(animate);
-        renderer.render(stage0);  
+        renderer.render(stage0);
+        renderer2.render(stage2);
 
-		ctx.rect(0,0,ctx.canvas.width,ctx.canvas.height);
+		/*ctx.rect(0,0,ctx.canvas.width,ctx.canvas.height);
 		ctx.fillStyle=background_clr;
-		ctx.fill();
+		ctx.fill();*/
         balls.forEach(function(ball){
             ball.render();
         });
@@ -148,7 +167,7 @@ function getDim(w1, h1){
             
         //canvas.removeEventListener("touchstart", touchDownListener, false);
         //window.addEventListener("touchend", touchEndListener, false);
-        //console.log("x: " + mousePosition.x + ", y: " + mousePosition.y);
+        console.log("x: " + mousePosition.x + ", y: " + mousePosition.y);
         var ball = new Ball();
         ball.init(ctx, mousePosition.x, mousePosition.y);
         balls.push(ball);
