@@ -1,0 +1,40 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <link rel='stylesheet' type='text/css' href="css/styles.css" />
+        
+    <script type="text/javascript">
+    function a(){if(document.all){return false;}}function b(e){if(document.layers||(document.getElementById&!document.all)){if(e.which==2||e.which==3){return false;}}}if(document.layers){document.captureEvents(Event.MOUSEDOWN);document.onmousedown=b;}else{document.onmouseup=b;document.oncontextmenu=a;}document.oncontextmenu=new Function("return false")
+    </script>
+
+    <title>Experiment</title>
+	<style>
+		body {
+			margin: 0;
+			padding: 0;
+			background-color: #E9E7E3;
+            /*#E0FFFF;*/
+		}
+	</style>
+
+</head>
+<body>    
+    <div id="canvas"></div>
+    
+
+    <script src="js/lib/jquery-1.10.2.js"></script>
+	<script src="js/lib/pixi.min.js"></script>	
+	<script src="js/lib/pvector.js"></script>
+	
+	<script src="js/UpdateQueue.js"></script>
+	
+	<script src="js/loadAssets.js"></script>	
+	<script src="js/main.js"></script>
+
+	</body>
+</html>
