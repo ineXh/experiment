@@ -115,7 +115,7 @@ function onTouchEnd(event){
 	//path.addPoint(mousePos.x, mousePos.y);
 	//path.drawPath();
 }
-function addListeners(){
+function addListeners(renderer){
     renderer.view.addEventListener("mousedown", onMouseStart, true);
     renderer.view.addEventListener("mouseup", onMouseUp, true);
     renderer.view.addEventListener("mousemove", onMouseMove, true);
@@ -124,7 +124,7 @@ function addListeners(){
     renderer.view.addEventListener("touchmove", onTouchMove, true);
     renderer.view.addEventListener("backbutton", backButtonTap, true);
 }
-function removeListeners(){
+function removeListeners(renderer){
     renderer.view.removeEventListener("mousedown", onMouseStart, true);
     renderer.view.removeEventListener("mouseup", onMouseUp, true);
     renderer.view.removeEventListener("mousemove", onMouseMove, true);
@@ -195,11 +195,11 @@ function RGBColor(r,g,b){
 	return (r * 65536 + g * 256 + b);
 }
 function getRndColor() {
-    /*var r = 255*Math.random()|0,
+    var r = 255*Math.random()|0,
         g = 255*Math.random()|0,
         b = 255*Math.random()|0;
-    return (r * 65536 + g * 256 + b)//'rgb(' + r + ',' + g + ',' + b + ')';*/
-    return Math.random() * 0xFFFFFF;
+    return 'rgb(' + r + ',' + g + ',' + b + ')'; //(r * 65536 + g * 256 + b)
+    //return Math.random() * 0xFFFFFF;
 }
 function getRngColor(r1,r2,g1,g2,b1,b2) {
     var r = r2*Math.random()|r1,
@@ -676,4 +676,15 @@ function shuffle(a) {
         a[i - 1] = a[j];
         a[j] = x;
     }
+}
+
+var buttonCreate = function(texture, x, y, width){
+    var button = new PIXI.Sprite(texture);
+    button.anchor.x = 0.5;
+    button.anchor.y = 0.5;
+    button.position.x = x;
+    button.position.y = y;
+    //console.log(button.width)
+    button.scale.set( width / button.width);
+    return button;
 }
