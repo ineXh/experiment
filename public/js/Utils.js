@@ -40,7 +40,7 @@ function getMouseBasic(event){
 } // end getMouseBasic
 
 function onMouseStart(event){
-  if(spritetouched) return;
+  if(spriteTouched) return;
 	//console.log("mouse start")
 	getMouse(event, undefined);
 
@@ -57,7 +57,7 @@ function onMouseMove(event){
 
 }
 function onMouseUp(event){
-  if(spritetouched) spritetouched = false;
+  if(spriteTouched) spriteTouched = false;
   if(!mousePos.touched) return;
     //console.log("mouse up")
 	getMouse(event, undefined);
@@ -67,13 +67,18 @@ function onMouseUp(event){
   if(menu_equip != undefined)  menu_equip.touchend();
 }
 function onTouchStart(event){
-  if(spritetouched) return;
+  if(spriteTouched) return;
 
-  event.preventDefault();
+  //event.preventDefault();
 	getMouse(event, event.changedTouches[0]);
   mousePos.touched = true;
 
-  if(menu_charactercreate != undefined) menu_charactercreate.crop.touchstart();
+  var shape = new Shape();
+  shapeTemplate.x = mousePos.x;
+  shapeTemplate.y = mousePos.y;
+  shapeTemplate.type = ShapeType.Circle;
+  shape.init(stage, shapeTemplate);
+  shapes.push(shape);
 
 } // end onTouchStart
 function onMultiTouchStart(event){
@@ -81,7 +86,7 @@ function onMultiTouchStart(event){
 
 }
 function onTouchMove(event){
-    event.preventDefault();
+    //event.preventDefault();
     if(!mousePos.touched) return;
     //console.log('onTouchMove ' + mousePos.touched)
 
@@ -89,9 +94,7 @@ function onTouchMove(event){
 	getMouse(event, event.changedTouches[0]);
     //stage.x -= mousePos.px - mousePos.x;
     //stage.y -= mousePos.py - mousePos.y;
-  onMultiTouchMove(event);
-  if(menu_charactercreate != undefined) menu_charactercreate.crop.touchmove();
-  if(menu_equip != undefined)  menu_equip.touchmove();
+  onMultiTouchMove(event);  
 
 } // end onTouchMove
 function onMultiTouchMove(event){
@@ -101,7 +104,7 @@ function onMultiTouchMove(event){
 }
 
 function onTouchEnd(event){
-  if(spritetouched) spritetouched = false;
+  if(spriteTouched) spriteTouched = false;
   //console.log('util touchend')
   //console.log(event.changedTouches)
   event.preventDefault();
@@ -110,8 +113,7 @@ function onTouchEnd(event){
 	//getMouse(event);
 	getMouse(event, event.changedTouches[0]);
 	mousePos.touched = false;
-  if(menu_charactercreate != undefined) menu_charactercreate.crop.touchend();
-  if(menu_equip != undefined) menu_equip.touchend();
+  
 	//path.addPoint(mousePos.x, mousePos.y);
 	//path.drawPath();
 }
@@ -195,11 +197,11 @@ function RGBColor(r,g,b){
 	return (r * 65536 + g * 256 + b);
 }
 function getRndColor() {
-    var r = 255*Math.random()|0,
+    /*var r = 255*Math.random()|0,
         g = 255*Math.random()|0,
         b = 255*Math.random()|0;
-    return 'rgb(' + r + ',' + g + ',' + b + ')'; //(r * 65536 + g * 256 + b)
-    //return Math.random() * 0xFFFFFF;
+    return 'rgb(' + r + ',' + g + ',' + b + ')'; //(r * 65536 + g * 256 + b)*/
+    return Math.random() * 0xFFFFFF;
 }
 function getRngColor(r1,r2,g1,g2,b1,b2) {
     var r = r2*Math.random()|r1,
