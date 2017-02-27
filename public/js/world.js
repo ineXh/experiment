@@ -31,8 +31,10 @@ function createWorld() {
 	ground.CreateFixture(shape0, 0.0);
 
 	*/
-	for(var i = 0; i < 10; i++){
-		createBall(Math.random()*width/METER, -getRandomInt(50,5000) / METER);	
+	//createStaticFloor();
+	for(var i = 0; i < 5; i++){
+		createBall(Math.random()*width/METER, -getRandomInt(50,5000) / METER);
+		createRect(Math.random()*width/METER, -getRandomInt(50,5000) / METER);
 	}
 	
 
@@ -41,14 +43,13 @@ function createWorld() {
 function createGround() {
 	/*var ground = world.CreateBody( new b2BodyDef() );
 	createBall(0);*/
-
 	var bd_ground = new b2BodyDef();
 	bd_ground.set_type(Box2D.b2_staticBody);	
     ground = world.CreateBody(bd_ground);
 
     // bot
 	var shape0 = new Box2D.b2EdgeShape();
-	shape0.Set(new Box2D.b2Vec2(-40.0, height/METER), new Box2D.b2Vec2(40.0, height/METER)); //height/METER + 1
+	shape0.Set(new Box2D.b2Vec2(-1.0, height/METER), new Box2D.b2Vec2(width/METER+1, height/METER)); //height/METER + 1
 	ground.CreateFixture(shape0, 0.0);
 
 	// left
@@ -63,36 +64,31 @@ function createGround() {
 
 }
 
-function createBall(x, y){//world, x, y) {
-	/*var cshape = new Box2D.b2CircleShape();
-    cshape.set_m_radius(0.5);
-
+function createStaticFloor(){
 	var ZERO = new b2Vec2(0, 0);
     var temp = new b2Vec2(0, 0);
 
-	var bd = new b2BodyDef();
-    bd.set_type(Box2D.b2_dynamicBody);
-    bd.set_position(ZERO);
+	var bd	= new b2BodyDef();
+    bd.set_type(Box2D.b2_staticBody);
     var body = world.CreateBody(bd);
-    var randomValue = Math.random();
-    var density = 1.0;
-    fixture = body.CreateFixture(cshape, density);
-    //if ( randomValue < 0.2 )
-    //    body.CreateFixture(cshape, 1.0);
-    //else
-    //    body.CreateFixture(createRandomPolygonShape(0.5), 1.0);
-    temp.Set(25,5);//16*(Math.random()-0.5), 4.0 + 2.5*index);
+
+	var shape = new Box2D.b2PolygonShape();
+    shape.SetAsBox(width/2/METER, height/10/METER);
+
+    var fixtureDef = new b2FixtureDef();
+    fixtureDef.set_density( 1 );
+    fixtureDef.set_shape( shape );
+    fixture = body.CreateFixture( fixtureDef );
+
+    temp.Set(width/2/METER, height/2/METER);//16*(Math.random()-0.5), 4.0 + 2.5*index);
     body.SetTransform(temp, 0.0);
     body.SetLinearVelocity(ZERO);
     body.SetAwake(1);
     body.SetActive(1);
-    
-    bodies.push(body);
-    shape = spawnCircle(stage, 25, 5, r);
-    shape.body = body;
-    //fShape[0].GetPosition().get_y()*/
-    //debugger;*/
 
+}
+
+function createBall(x, y){//world, x, y) {	
     var ZERO = new b2Vec2(0, 0);
     var temp = new b2Vec2(0, 0);
 
@@ -108,21 +104,42 @@ function createBall(x, y){//world, x, y) {
 	fixtureDef.set_shape( cshape );
 	fixture = body.CreateFixture( fixtureDef );
 	
-	//debugger;
-
-    //fixture = body.CreateFixture(cshape, density);
-
     temp.Set(x, y);//16*(Math.random()-0.5), 4.0 + 2.5*index);
     body.SetTransform(temp, 0.0);
     body.SetLinearVelocity(ZERO);
     body.SetAwake(1);
     body.SetActive(1);
 
-
     bodies.push(body);
     shape = spawnCircle(stage, 25, 5, 85/2);
     shape.body = body;
+}
 
+function createRect(x, y){
+	var ZERO = new b2Vec2(0, 0);
+    var temp = new b2Vec2(0, 0);
+
+    var bd	= new b2BodyDef();
+    bd.set_type(Box2D.b2_dynamicBody);
+    var body = world.CreateBody(bd);
+    var shape = new Box2D.b2PolygonShape();    	
+    shape.SetAsBox(85/2/METER, 85/2/METER);
+    var fixtureDef = new b2FixtureDef();
+	fixtureDef.set_density( 1 );
+	fixtureDef.set_friction( 1 );
+	fixtureDef.set_restitution(0.4);
+	fixtureDef.set_shape( shape );
+	fixture = body.CreateFixture( fixtureDef );
+	
+    temp.Set(x, y);//16*(Math.random()-0.5), 4.0 + 2.5*index);
+    body.SetTransform(temp, 0.0);
+    body.SetLinearVelocity(ZERO);
+    body.SetAwake(1);
+    body.SetActive(1);
+
+    bodies.push(body);
+    shape = spawnRect(stage, 25, 5, 85, 85);
+    shape.body = body;
 }
 
 function step(timestamp) {

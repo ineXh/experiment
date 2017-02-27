@@ -41,6 +41,7 @@ Shape.prototype = {
 			this.pos.y = this.body.GetPosition().get_y()*100;
 			this.graphics.x = this.pos.x;
 			this.graphics.y = this.pos.y;
+			this.graphics.rotation = this.body.GetAngle();
 		} 
 	},
 	move: function(time){
@@ -69,6 +70,8 @@ Shape.prototype = {
 		this.graphics.beginFill(this.clr, 1);
 		this.graphics.drawCircle(0, 0, this.r);
 		this.graphics.endFill();
+		this.graphics.moveTo(0, 0);		
+		this.graphics.lineTo(this.r, 0);
 		this.container.addChild(this.graphics);
 	}, // end drawCircle
 	renderCircle: function(){
@@ -88,8 +91,10 @@ Shape.prototype = {
 	    this.graphics.y = this.pos.y;
 		this.graphics.lineStyle(this.lineThick, this.strokeClr, 1);
 		this.graphics.beginFill(this.clr, 1);
-		this.graphics.drawRect(0, 0, this.width, this.height);
+		this.graphics.drawRect(-this.width/2, -this.height/2, this.width, this.height);
 		this.graphics.endFill();
+		this.graphics.moveTo(0, 0);		
+		this.graphics.lineTo(this.width/2, 0);		
 		this.container.addChild(this.graphics);
 	}, // end drawRect
 };
