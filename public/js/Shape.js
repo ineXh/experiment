@@ -2,8 +2,10 @@ function ShapeType(){}
 ShapeType.Invalid = -1;
 ShapeType.Circle = 0;
 ShapeType.Rect = 1;
+ShapeType.Tri = 2;
+ShapeType.Poly = 3;
 
-var shapeTemplate = {x: 0, y: 0, r: 0, width: 0, height: 0, type: ShapeType.Invalid};
+var shapeTemplate = {x: 0, y: 0, r: 0, width: 0, height: 0, numVerts: 0, type: ShapeType.Invalid};
 function Shape(){
 	this.create();
 }
@@ -30,6 +32,7 @@ Shape.prototype = {
 		this.r = input.r;
 		this.width = input.width;
 		this.height = input.height;
+		this.numVerts = input.numVerts;
 		this.container = container;
 		//console.log(this.clr)
 		this.draw();
@@ -62,6 +65,12 @@ Shape.prototype = {
 			break;
 			case ShapeType.Rect:
 				this.drawRect();
+			break;
+			case ShapeType.Tri:
+				this.drawTri();
+			break;
+			case ShapeType.Poly:
+				this.drawPoly();
 			break;
 		}
 	},
@@ -100,6 +109,42 @@ Shape.prototype = {
 		this.graphics.lineTo(this.width/2, 0);		
 		this.container.addChild(this.graphics);
 	}, // end drawRect
+	drawTri: function(){
+		this.graphics = new PIXI.Graphics();
+	    this.graphics.x = this.pos.x;
+	    this.graphics.y = this.pos.y;
+		this.graphics.lineStyle(this.lineThick, this.strokeClr, 1);
+		this.graphics.beginFill(this.clr, 1);
+		
+		this.graphics.moveTo(this.width/2, this.height/3);
+		this.graphics.lineTo(0, -this.height*2/3);
+		this.graphics.lineTo(-this.width/2, this.height/3);
+		this.graphics.lineTo(this.width/2, this.height/3);
+
+		this.graphics.endFill();
+		this.graphics.moveTo(0, 0);
+		this.graphics.lineTo(this.width/2/3*2, 0);
+		this.container.addChild(this.graphics);
+	}, // end drawTri
+	drawPoly: function(){
+		this.graphics = new PIXI.Graphics();
+	    this.graphics.x = this.pos.x;
+	    this.graphics.y = this.pos.y;
+		this.graphics.lineStyle(this.lineThick, this.strokeClr, 1);
+		this.graphics.beginFill(this.clr, 1);
+		
+		var i = 0;
+		var angle = i / this.numVerts * 360.0 * Math.PI / 180;
+		this.graphics.moveTo(this.r * Math.sin(angle), this.r * -Math.cos(angle));
+		for (var i = 1; i < this.numVerts + 1; i++) {
+	        var angle = i / this.numVerts * 360.0 * Math.PI / 180;
+	        this.graphics.lineTo(this.r * Math.sin(angle), this.r * -Math.cos(angle));
+	    }
+		this.graphics.endFill();
+		this.graphics.moveTo(0, 0);
+		this.graphics.lineTo(0, -this.r);
+		this.container.addChild(this.graphics);
+	}, // end drawPoly
 };
 var spawnCircle = function(container, x, y, r){
 	var shape = new Shape();
@@ -121,4 +166,26 @@ var spawnRect = function(container, x,y,width, height){
     shape.init(container, shapeTemplate);
     shapes.push(shape);
     return shape;
+}
+var spawnTri = function(container, x,y,width, height){
+	var shape = new Shape();
+    shapeTemplate.x = x;
+    shapeTemplate.y = y;
+    shapeTemplate.type = ShapeType.Tri;
+    shapeTemplate.width = width;
+    shapeTemplate.height = height;
+    shape.init(container, shapeTemplate);
+    shapes.push(shape);
+    return shape;
+}
+var spawnPoly = function(container, x, y, numVerts, r){
+	var shape = new Shape();
+	shapeTemplate.x = x;
+	shapeTemplate.y = y;
+	shapeTemplate.numVerts = numVerts;
+	shapeTemplate.r = r;
+	shapeTemplate.type = ShapeType.Poly;
+	shape.init(container, shapeTemplate);
+	shapes.push(shape);
+	return shape;
 }

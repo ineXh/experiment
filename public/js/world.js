@@ -32,9 +32,10 @@ function createWorld() {
 
 	*/
 	createStaticFloor();
-	for(var i = 0; i < 2; i++){
-		createBall(Math.random()*width/METER, -getRandomInt(50,5000) / METER);
-		createRect(Math.random()*width/METER, -getRandomInt(50,5000) / METER);
+	for(var i = 0; i < 10; i++){
+		//createBall(Math.random()*width/METER, -getRandomInt(50,5000) / METER);
+		//createRect(Math.random()*width/METER, -getRandomInt(50,5000) / METER);
+		createPoly(getRandomInt(3,8), Math.random()*width/METER, -getRandomInt(50,5000) / METER);
 	}
 	
 
@@ -146,6 +147,49 @@ function createRect(x, y){
     shape.body = body;
 }
 
+function createPoly(numVerts, x, y){
+	var ZERO = new b2Vec2(0, 0);
+    var temp = new b2Vec2(0, 0);
+
+    var bd	= new b2BodyDef();
+    bd.set_type(Box2D.b2_dynamicBody);
+    var body = world.CreateBody(bd);
+    //var shape = new Box2D.b2PolygonShape();
+    //shape.SetAsBox(85/2/METER, 85/2/METER);
+
+    var verts = [];
+    var width = 85;
+    var height = 85;
+    /*verts.push( new b2Vec2( width/2/METER, height/3 /2 /METER) );
+    verts.push( new b2Vec2( 0,-2*height/3/2/METER) );
+    verts.push( new b2Vec2( -width/2/METER, height/3 /2 /METER) );*/
+    radius = 85/2/METER;
+    for (var i = 0; i < numVerts; i++) {
+        var angle = i / numVerts * 360.0 * Math.PI / 180;
+        verts.push( new b2Vec2( radius * Math.sin(angle), radius * -Math.cos(angle) ) );
+    }
+
+    var shape = createPolygonShape(verts);
+    
+    var fixtureDef = new b2FixtureDef();
+	fixtureDef.set_density( 1 );
+	fixtureDef.set_friction( 1 );
+	fixtureDef.set_restitution(0.4);
+	fixtureDef.set_shape( shape );
+	fixture = body.CreateFixture( fixtureDef );
+	
+    temp.Set(x, y);//16*(Math.random()-0.5), 4.0 + 2.5*index);
+    body.SetTransform(temp, 0.0);
+    body.SetLinearVelocity(ZERO);
+    body.SetAwake(1);
+    body.SetActive(1);
+
+    bodies.push(body);
+    //shape = spawnTri(stage, 25, 5, 85, 85);
+    shape = spawnPoly(stage, 0, 0, numVerts, 85/2);
+    shape.body = body;
+}
+
 function step(timestamp) {
     
     /*if ( currentTest && currentTest.step ) 
@@ -158,7 +202,7 @@ function step(timestamp) {
     }
     
     var current = Date.now();
-    world.Step(1/60, 3, 2);
+    world.Step(1/60, 2, 2);
     var frametime = (Date.now() - current);
     frameTime60 = frameTime60 * (59/60) + frametime * (1/60);
     
