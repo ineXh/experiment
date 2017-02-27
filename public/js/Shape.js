@@ -16,6 +16,7 @@ Shape.prototype = {
 		this.r = 50;
 		this.alpha = 0.8;
 		this.lineThick = 5;
+		this.maxSpeed = width/20;
 		//this.sprite = buttonCreate(resources.circle.texture, 0, 0, this.r*2);		
 	},
 	init: function(container, input){//x, y, type){
@@ -42,7 +43,7 @@ Shape.prototype = {
 			this.graphics.x = this.pos.x;
 			this.graphics.y = this.pos.y;
 			this.graphics.rotation = this.body.GetAngle();
-		} 
+		}else{this.move();}
 	},
 	move: function(time){
 		this.vel.add(this.accel);
@@ -50,6 +51,8 @@ Shape.prototype = {
 		this.vel.limit(this.maxSpeed);
 		this.pos.add(this.vel);
 		this.accel.mult(0);
+		this.graphics.x = this.pos.x*100;
+		this.graphics.y = this.pos.y*100;
 		//if(this.border)   this.stayinBorder();
 	},
 	draw: function(){

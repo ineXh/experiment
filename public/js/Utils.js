@@ -73,7 +73,7 @@ function onTouchStart(event){
 	getMouse(event, event.changedTouches[0]);
   mousePos.touched = true;
 
-  spawnCircle(stage, mousePos.x, mousePos.y);
+  spawnCircle(stage, mousePos.x/METER, mousePos.y/METER, 85/2);
 
 } // end onTouchStart
 function onMultiTouchStart(event){

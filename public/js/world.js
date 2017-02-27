@@ -31,8 +31,8 @@ function createWorld() {
 	ground.CreateFixture(shape0, 0.0);
 
 	*/
-	//createStaticFloor();
-	for(var i = 0; i < 5; i++){
+	createStaticFloor();
+	for(var i = 0; i < 2; i++){
 		createBall(Math.random()*width/METER, -getRandomInt(50,5000) / METER);
 		createRect(Math.random()*width/METER, -getRandomInt(50,5000) / METER);
 	}
@@ -69,14 +69,14 @@ function createStaticFloor(){
     var temp = new b2Vec2(0, 0);
 
 	var bd	= new b2BodyDef();
-    bd.set_type(Box2D.b2_staticBody);
+    bd.set_type(Box2D.b2_staticBody);//b2_staticBody //b2_dynamicBody
     var body = world.CreateBody(bd);
 
 	var shape = new Box2D.b2PolygonShape();
-    shape.SetAsBox(width/2/METER, height/10/METER);
+    shape.SetAsBox(width/2 /2/METER, height/10 /2/METER);
 
     var fixtureDef = new b2FixtureDef();
-    fixtureDef.set_density( 1 );
+    fixtureDef.set_density( 0 );
     fixtureDef.set_shape( shape );
     fixture = body.CreateFixture( fixtureDef );
 
@@ -85,6 +85,10 @@ function createStaticFloor(){
     body.SetLinearVelocity(ZERO);
     body.SetAwake(1);
     body.SetActive(1);
+
+    bodies.push(body);
+    shape = spawnRect(stage, 25, 5, width/2, height/10);
+    shape.body = body;
 
 }
 

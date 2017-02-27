@@ -23,6 +23,12 @@ graphics = new PIXI.Graphics();
     var initialize = function(load, res){
         loader = load;
         resources = res;
+
+        const container = document.createElement("div");
+        document.body.appendChild(container);        
+        stats = new Stats();
+        container.appendChild(stats.domElement);
+        stats.domElement.style.position = "absolute";
 		
         addListeners(renderer);
         
@@ -45,6 +51,7 @@ graphics = new PIXI.Graphics();
     loadAssets(initialize);
 
     var update = function(){
+        stats.update();
         updateQueue.update();
          step();
          shapes.forEach(function(s){
