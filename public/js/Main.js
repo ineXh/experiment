@@ -1,10 +1,14 @@
 var ctx;
 var background_clr = "#88B4FF";//"#00";//"#AA8844";
 var world;// = createWorld();
+var mouseJointGroundBody;
+var ground;
+
 var shapes = [];
 var canvas;
 var width = 600;
 var height = 600;
+var showStats = false;
 
 var spriteTouched = false;
 graphics = new PIXI.Graphics();
@@ -21,13 +25,8 @@ graphics = new PIXI.Graphics();
         resources = res;
 		
         addListeners(renderer);
-
-        //debugger;
-
-
+        
         updateQueue = new UpdateQueue();
-
-        //addListeners(renderer);
 
         sprite = buttonCreate(resources.bunny.texture, 0, 0, 30);            
         sprite.x = 50;
@@ -36,7 +35,9 @@ graphics = new PIXI.Graphics();
         stage.addChild(sprite);
         stage.addChild(graphics);
 
-        spawnRect(stage, 50,50, width/2, 50);
+        //spawnRect(stage, 50,50, width/2, 50);
+
+        createWorld();
 
         animate();
     } // end initialize
@@ -45,6 +46,10 @@ graphics = new PIXI.Graphics();
 
     var update = function(){
         updateQueue.update();
+         step();
+         shapes.forEach(function(s){
+            s.update();
+         });
         //drawWorld(world, ctx);
                 
     } // end update

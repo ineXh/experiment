@@ -9,12 +9,14 @@ function Shape(){
 }
 Shape.prototype = {
 	create: function(){
+		this.body = null;
 		this.pos = new PVector(0, 0);
 		this.vel = new PVector(0, 0);
 		this.accel = new PVector(0, 0);
 		this.r = 50;
 		this.alpha = 0.8;
 		this.lineThick = 5;
+		//this.sprite = buttonCreate(resources.circle.texture, 0, 0, this.r*2);		
 	},
 	init: function(container, input){//x, y, type){
 		this.pos.x = input.x;
@@ -24,7 +26,7 @@ Shape.prototype = {
 		this.strokeClr = getRndColor();
 
 		this.type = input.type;
-
+		this.r = input.r;
 		this.width = input.width;
 		this.height = input.height;
 		this.container = container;
@@ -33,7 +35,13 @@ Shape.prototype = {
 		this.graphics.alpha = this.alpha;
 	},
 	update: function(){
-		this.move();
+		//this.move();
+		if(this.body != null){
+			this.pos.x = this.body.GetPosition().get_x()*100;
+			this.pos.y = this.body.GetPosition().get_y()*100;
+			this.graphics.x = this.pos.x;
+			this.graphics.y = this.pos.y;
+		} 
 	},
 	move: function(time){
 		this.vel.add(this.accel);
@@ -85,7 +93,16 @@ Shape.prototype = {
 		this.container.addChild(this.graphics);
 	}, // end drawRect
 };
-
+var spawnCircle = function(container, x, y, r){
+	var shape = new Shape();
+	shapeTemplate.x = x;
+	shapeTemplate.y = y;
+	shapeTemplate.r = r;
+	shapeTemplate.type = ShapeType.Circle;
+	shape.init(container, shapeTemplate);
+	shapes.push(shape);
+	return shape;
+}
 var spawnRect = function(container, x,y,width, height){
 	var shape = new Shape();
     shapeTemplate.x = x;
@@ -95,4 +112,5 @@ var spawnRect = function(container, x,y,width, height){
     shapeTemplate.height = height;
     shape.init(container, shapeTemplate);
     shapes.push(shape);
+    return shape;
 }

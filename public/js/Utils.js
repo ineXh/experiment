@@ -73,12 +73,7 @@ function onTouchStart(event){
 	getMouse(event, event.changedTouches[0]);
   mousePos.touched = true;
 
-  var shape = new Shape();
-  shapeTemplate.x = mousePos.x;
-  shapeTemplate.y = mousePos.y;
-  shapeTemplate.type = ShapeType.Circle;
-  shape.init(stage, shapeTemplate);
-  shapes.push(shape);
+  spawnCircle(stage, mousePos.x, mousePos.y);
 
 } // end onTouchStart
 function onMultiTouchStart(event){
