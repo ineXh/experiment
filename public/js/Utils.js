@@ -45,15 +45,14 @@ function onMouseStart(event){
 	getMouse(event, undefined);
 
 	mousePos.touched = true;
-  if(menu_charactercreate != undefined) menu_charactercreate.crop.touchstart();
+  
 
 }
 function onMouseMove(event){
   if(!mousePos.touched) return;
   //console.log("onMouseMove")
 	getMouse(event, undefined);
-  if(menu_charactercreate != undefined)  menu_charactercreate.crop.touchmove();
-  if(menu_equip != undefined)  menu_equip.touchmove();
+  
 
 }
 function onMouseUp(event){
@@ -63,8 +62,7 @@ function onMouseUp(event){
 	getMouse(event, undefined);
 
   mousePos.touched = false;
-  if(menu_charactercreate != undefined) menu_charactercreate.crop.touchend();
-  if(menu_equip != undefined)  menu_equip.touchend();
+  
 }
 function onTouchStart(event){
   if(spriteTouched) return;
@@ -76,7 +74,7 @@ function onTouchStart(event){
   //spawnCircle(stage, mousePos.x/METER, mousePos.y/METER, 85/2);
   //spawnTri(stage, mousePos.x/METER, mousePos.y/METER, 85, 85);
   //spawnPoly(stage, mousePos.x/METER, mousePos.y/METER, 5, 85/2);
-  createPoly(getRandomInt(3,8), mousePos.stage_x, mousePos.stage_y);
+  createPoly(getRandomInt(3,8), mousePos.stage_x, mousePos.stage_y, getRandomArbitrary(0.5, 1)*width/10);
 
 } // end onTouchStart
 function onMultiTouchStart(event){

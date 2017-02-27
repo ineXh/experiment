@@ -8,6 +8,9 @@ var shapes = [];
 var canvas;
 var width = 600;
 var height = 600;
+var scope_width = width*0.15;
+var scope_height = height*0.25;
+var center = null;
 var showStats = false;
 
 var spriteTouched = false;
@@ -57,7 +60,22 @@ graphics = new PIXI.Graphics();
          shapes.forEach(function(s){
             s.update();
          });
-        //drawWorld(world, ctx);
+        if(center != undefined && center != null){
+            if(center.x > (-stage.x + width/2 + scope_width)){
+                stage.x = -(center.x - width/2 - scope_width);
+            }
+            if(center.x < (-stage.x + width/2 - scope_width)){
+                stage.x = -(center.x - width/2 + scope_width);
+            }
+
+            if(center.y > (-stage.y + height*0.45/2 + scope_height)){
+                stage.y = -(center.y -height*0.45/2 - scope_height);
+            }
+
+            if(center.y < (-stage.y + height/2 - scope_height)){
+                stage.y = -(center.y - height/2 + scope_height)
+            }
+        }
                 
     } // end update
 

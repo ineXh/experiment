@@ -168,7 +168,20 @@ Shape.prototype = {
 		this.graphics.lineTo(0, -this.r);
 	}, // end drawPoly
 	drawVertices: function(){
-
+		var vertices = [];
+		for(var i = 0; i < this.points.length; i++){
+			vertices.push(this.points[i].x);
+			vertices.push(this.points[i].y);
+		}
+		vertices.push(this.points[0].x);
+		vertices.push(this.points[0].y);
+		this.graphics = new PIXI.Graphics();
+	    this.graphics.x = this.pos.x;
+	    this.graphics.y = this.pos.y;
+		this.graphics.lineStyle(this.lineThick, this.strokeClr, 1);
+		this.graphics.beginFill(this.clr, 1);		
+    	this.graphics.drawPolygon(vertices);
+    	this.graphics.endFill();
 	}, // end drawVertices
 };
 var spawnCircle = function(container, x, y, r){
@@ -222,4 +235,13 @@ var spawnTri = function(container, x,y,width, height){
     shapes.push(shape);
     return shape;
 }
-v
+var spawnVertices = function(container, x, y, points){
+	var shape = new Shape();
+	shapeTemplate.x = x;
+    shapeTemplate.y = y;
+	shapeTemplate.type = ShapeType.Vertices;
+	shapeTemplate.points = points;
+	shape.init(container, shapeTemplate);
+	shapes.push(shape);
+	return shape;
+}
