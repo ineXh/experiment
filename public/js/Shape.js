@@ -4,8 +4,11 @@ ShapeType.Circle = 0;
 ShapeType.Rect = 1;
 ShapeType.Tri = 2;
 ShapeType.Poly = 3;
+ShapeType.Line = 4;
+ShapeType.Vertices = 5;
 
-var shapeTemplate = {x: 0, y: 0, r: 0, width: 0, height: 0, numVerts: 0, type: ShapeType.Invalid};
+var shapeTemplate = {x: 0, y: 0, r: 0, width: 0, height: 0, numVerts: 0, type: ShapeType.Invalid,
+					points: []};
 function Shape(){
 	this.create();
 }
@@ -19,6 +22,7 @@ Shape.prototype = {
 		this.alpha = 0.8;
 		this.lineThick = 5;
 		this.maxSpeed = width/20;
+		this.points = [];
 		//this.sprite = buttonCreate(resources.circle.texture, 0, 0, this.r*2);		
 	},
 	init: function(container, input){//x, y, type){
@@ -34,6 +38,10 @@ Shape.prototype = {
 		this.height = input.height;
 		this.numVerts = input.numVerts;
 		this.container = container;
+
+		for(var i = 0; i < input.points.length; i++){
+			this.points[i] = new PVector(input.points[i].x, input.points[i].y);
+		}
 		//console.log(this.clr)
 		this.draw();
 		this.graphics.alpha = this.alpha;
@@ -41,8 +49,8 @@ Shape.prototype = {
 	update: function(){
 		//this.move();
 		if(this.body != null){
-			this.pos.x = this.body.GetPosition().get_x()*100;
-			this.pos.y = this.body.GetPosition().get_y()*100;
+			this.pos.x = this.body.GetPosition().get_x()*METER;
+			this.pos.y = this.body.GetPosition().get_y()*METER;
 			this.graphics.x = this.pos.x;
 			this.graphics.y = this.pos.y;
 			this.graphics.rotation = this.body.GetAngle();
@@ -54,8 +62,8 @@ Shape.prototype = {
 		this.vel.limit(this.maxSpeed);
 		this.pos.add(this.vel);
 		this.accel.mult(0);
-		this.graphics.x = this.pos.x*100;
-		this.graphics.y = this.pos.y*100;
+		this.graphics.x = this.pos.x;//*METER;
+		this.graphics.y = this.pos.y;//*METER;
 		//if(this.border)   this.stayinBorder();
 	},
 	draw: function(){
@@ -72,8 +80,17 @@ Shape.prototype = {
 			case ShapeType.Poly:
 				this.drawPoly();
 			break;
+			case ShapeType.Line:
+				if(this.points.length < 1) return;
+				this.drawLine();
+			break;
+			case ShapeType.Vertices:
+				if(this.points.length < 1) return;
+				this.drawVertices();
+			break;
 		}
-	},
+		this.container.addChild(this.graphics);
+	}, // end draw
 	drawCircle: function(){
 		this.graphics = new PIXI.Graphics();
 	    this.graphics.x = this.pos.x;
@@ -82,9 +99,8 @@ Shape.prototype = {
 		this.graphics.beginFill(this.clr, 1);
 		this.graphics.drawCircle(0, 0, this.r);
 		this.graphics.endFill();
-		this.graphics.moveTo(0, 0);		
+		this.graphics.moveTo(0, 0);
 		this.graphics.lineTo(this.r, 0);
-		this.container.addChild(this.graphics);
 	}, // end drawCircle
 	renderCircle: function(){
 		//this.context.strokeStyle = '#ffffff';
@@ -97,6 +113,14 @@ Shape.prototype = {
 		this.context.stroke();
 		this.context.closePath();
 	}, // end renderCircle
+	drawLine: function(){		
+		this.graphics = new PIXI.Graphics();
+		this.graphics.lineStyle(this.lineThick, this.strokeClr, 1);
+		this.graphics.moveTo(this.points[0].x, this.points[0].y);
+		for(var i = 1; i < this.points.length; i++){
+			this.graphics.lineTo(this.points[i].x, this.points[i].y);
+		}
+	}, // end drawLine
 	drawRect: function(){
 		this.graphics = new PIXI.Graphics();
 	    this.graphics.x = this.pos.x;
@@ -105,9 +129,9 @@ Shape.prototype = {
 		this.graphics.beginFill(this.clr, 1);
 		this.graphics.drawRect(-this.width/2, -this.height/2, this.width, this.height);
 		this.graphics.endFill();
-		this.graphics.moveTo(0, 0);		
-		this.graphics.lineTo(this.width/2, 0);		
-		this.container.addChild(this.graphics);
+		this.graphics.moveTo(0, 0);
+		this.graphics.lineTo(this.width/2, 0);
+		
 	}, // end drawRect
 	drawTri: function(){
 		this.graphics = new PIXI.Graphics();
@@ -124,7 +148,6 @@ Shape.prototype = {
 		this.graphics.endFill();
 		this.graphics.moveTo(0, 0);
 		this.graphics.lineTo(this.width/2/3*2, 0);
-		this.container.addChild(this.graphics);
 	}, // end drawTri
 	drawPoly: function(){
 		this.graphics = new PIXI.Graphics();
@@ -143,8 +166,10 @@ Shape.prototype = {
 		this.graphics.endFill();
 		this.graphics.moveTo(0, 0);
 		this.graphics.lineTo(0, -this.r);
-		this.container.addChild(this.graphics);
 	}, // end drawPoly
+	drawVertices: function(){
+
+	}, // end drawVertices
 };
 var spawnCircle = function(container, x, y, r){
 	var shape = new Shape();
@@ -152,6 +177,25 @@ var spawnCircle = function(container, x, y, r){
 	shapeTemplate.y = y;
 	shapeTemplate.r = r;
 	shapeTemplate.type = ShapeType.Circle;
+	shape.init(container, shapeTemplate);
+	shapes.push(shape);
+	return shape;
+}
+var spawnLine = function(container, points){
+	var shape = new Shape();
+	shapeTemplate.type = ShapeType.Line;
+	shapeTemplate.points = points;
+	shape.init(container, shapeTemplate);
+	shapes.push(shape);
+	return shape;
+}
+var spawnPoly = function(container, x, y, numVerts, r){
+	var shape = new Shape();
+	shapeTemplate.x = x;
+	shapeTemplate.y = y;
+	shapeTemplate.numVerts = numVerts;
+	shapeTemplate.r = r;
+	shapeTemplate.type = ShapeType.Poly;
 	shape.init(container, shapeTemplate);
 	shapes.push(shape);
 	return shape;
@@ -178,14 +222,4 @@ var spawnTri = function(container, x,y,width, height){
     shapes.push(shape);
     return shape;
 }
-var spawnPoly = function(container, x, y, numVerts, r){
-	var shape = new Shape();
-	shapeTemplate.x = x;
-	shapeTemplate.y = y;
-	shapeTemplate.numVerts = numVerts;
-	shapeTemplate.r = r;
-	shapeTemplate.type = ShapeType.Poly;
-	shape.init(container, shapeTemplate);
-	shapes.push(shape);
-	return shape;
-}
+v

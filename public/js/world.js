@@ -23,6 +23,7 @@ function createWorld() {
 	 createGround(world);*/
 	var gravity = new Box2D.b2Vec2(0.0, 10.0);
     world = new Box2D.b2World(gravity);
+    //createBound();
     createGround();
     /*var bd_ground = new Box2D.b2BodyDef();
     ground = world.CreateBody(bd_ground);
@@ -31,21 +32,54 @@ function createWorld() {
 	ground.CreateFixture(shape0, 0.0);
 
 	*/
-	createStaticFloor();
+	//createStaticFloor();
 	for(var i = 0; i < 10; i++){
-		//createBall(Math.random()*width/METER, -getRandomInt(50,5000) / METER);
-		//createRect(Math.random()*width/METER, -getRandomInt(50,5000) / METER);
-		createPoly(getRandomInt(3,8), Math.random()*width/METER, -getRandomInt(50,5000) / METER);
+		createBall(Math.random()*width, -getRandomInt(50,height/2));
+		createRect(Math.random()*width, -getRandomInt(50,height/2));
+		createPoly(getRandomInt(3,8), Math.random()*width, -getRandomInt(50,height/2));
 	}
-	
-
 }
 
-function createGround() {
+function createCar(){
+
+}
+function createGround(){
+	var bd_ground = new b2BodyDef();
+	bd_ground.set_type(Box2D.b2_staticBody);
+    ground = world.CreateBody(bd_ground);
+
+	var shape = new b2EdgeShape();
+
+    var fixtureDef = new b2FixtureDef();
+    fixtureDef.set_shape(shape);
+    fixtureDef.set_density(0.0);
+    fixtureDef.set_friction(0.6);
+
+    var points = [	{x: -1*METER	, y: height*0.8},
+    				{x: 3*METER		, y: height*0.8},
+    				{x: 5*METER		, y: height*0.8 - 0.25*METER},
+    				{x: 6*METER		, y: height*0.8 - 1.0*METER},
+    				{x: 7*METER		, y: height*0.8 - 2.5*METER},
+    				{x: 9*METER		, y: height*0.8 - 0.0*METER},
+    				{x: 11*METER	, y: height*0.8 - 0.0*METER},
+    				{x: 13*METER	, y: height*0.8 + 0.5*METER},
+    				{x: 15*METER	, y: height*0.8 + 1.5*METER},
+    				{x: 15*METER	, y: 0},
+    			 ];
+
+    for (var i = 0; i < points.length-1; ++i){        
+        shape.Set( new b2Vec2(points[i].x/METER, points[i].y/METER), new b2Vec2(points[i+1].x/METER, points[i+1].y/METER));
+        ground.CreateFixture(fixtureDef);        
+    }
+
+    spawnLine(stage, points);
+} // end createGround
+
+function createBound() {
 	/*var ground = world.CreateBody( new b2BodyDef() );
 	createBall(0);*/
 	var bd_ground = new b2BodyDef();
-	bd_ground.set_type(Box2D.b2_staticBody);	
+	bd_ground.set_type(Box2D.b2_staticBody);
     ground = world.CreateBody(bd_ground);
 
     // bot
@@ -93,7 +127,9 @@ function createStaticFloor(){
 
 }
 
-function createBall(x, y){//world, x, y) {	
+function createBall(x, y){//world, x, y) {
+	x = x/METER;
+	y = y/METER;	
     var ZERO = new b2Vec2(0, 0);
     var temp = new b2Vec2(0, 0);
 
@@ -121,6 +157,9 @@ function createBall(x, y){//world, x, y) {
 }
 
 function createRect(x, y){
+	x = x/METER;
+	y = y/METER;
+
 	var ZERO = new b2Vec2(0, 0);
     var temp = new b2Vec2(0, 0);
 
@@ -148,6 +187,8 @@ function createRect(x, y){
 }
 
 function createPoly(numVerts, x, y){
+	x = x/METER;
+	y = y/METER;
 	var ZERO = new b2Vec2(0, 0);
     var temp = new b2Vec2(0, 0);
 
