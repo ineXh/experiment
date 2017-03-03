@@ -12,6 +12,7 @@ var scope_width = width*0.15;
 var scope_height = height*0.25;
 var center = null;
 var showStats = false;
+var car1, car2;
 
 var spriteTouched = false;
 graphics = new PIXI.Graphics();
@@ -37,7 +38,9 @@ graphics = new PIXI.Graphics();
         
         updateQueue = new UpdateQueue();
 
-        sprite = buttonCreate(resources.bunny.texture, 0, 0, 30);            
+        sprite = buttonCreate(resources.bunny.texture, 0, 0, 30);
+        //sprite = buttonCreate(PIXI.Texture.fromFrame("cloud.png"), 0, 0, 30);
+        
         sprite.x = 50;
         sprite.y = 50;
         //sprite.scale.set(this.scale);
@@ -60,6 +63,7 @@ graphics = new PIXI.Graphics();
          shapes.forEach(function(s){
             s.update();
          });
+         car1.update();
         if(center != undefined && center != null){
             if(center.x > (-stage.x + width/2 + scope_width)){
                 stage.x = -(center.x - width/2 - scope_width);

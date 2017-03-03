@@ -1,12 +1,3 @@
-function ShapeType(){}
-ShapeType.Invalid = -1;
-ShapeType.Circle = 0;
-ShapeType.Rect = 1;
-ShapeType.Tri = 2;
-ShapeType.Poly = 3;
-ShapeType.Line = 4;
-ShapeType.Vertices = 5;
-
 var shapeTemplate = {x: 0, y: 0, r: 0, width: 0, height: 0, numVerts: 0, type: ShapeType.Invalid,
 					points: []};
 function Shape(){

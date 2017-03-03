@@ -1,0 +1,93 @@
+{"frames": {
+
+"button.png":
+{
+	"frame": {"x":755,"y":132,"w":141,"h":82},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":141,"h":82},
+	"sourceSize": {"w":141,"h":82},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"car1.png":
+{
+	"frame": {"x":491,"y":2,"w":262,"h":159},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":262,"h":159},
+	"sourceSize": {"w":262,"h":159},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"car1a.png":
+{
+	"frame": {"x":755,"y":2,"w":262,"h":128},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":262,"h":128},
+	"sourceSize": {"w":262,"h":128},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"car2.png":
+{
+	"frame": {"x":179,"y":2,"w":176,"h":163},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":176,"h":163},
+	"sourceSize": {"w":176,"h":163},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"car2a.png":
+{
+	"frame": {"x":344,"y":2,"w":176,"h":145},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":176,"h":145},
+	"sourceSize": {"w":176,"h":145},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"cloud.png":
+{
+	"frame": {"x":179,"y":180,"w":153,"h":64},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":153,"h":64},
+	"sourceSize": {"w":153,"h":64},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"goal.png":
+{
+	"frame": {"x":491,"y":163,"w":81,"h":157},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":81,"h":157},
+	"sourceSize": {"w":81,"h":157},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"tree.png":
+{
+	"frame": {"x":2,"y":2,"w":175,"h":193},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":175,"h":193},
+	"sourceSize": {"w":175,"h":193},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"wheel.png":
+{
+	"frame": {"x":650,"y":163,"w":69,"h":69},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":69,"h":69},
+	"sourceSize": {"w":69,"h":69},
+	"pivot": {"x":0.5,"y":0.5}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "carsprites.png",
+	"format": "RGBA8888",
+	"size": {"w":1019,"h":246},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:84554a0b482be96dac90699c05f0b754:c19bf23fe7437c6cca68cdf68364be84:3f94257c91c2ebaec91311d44fbda63c$"
+}
+}

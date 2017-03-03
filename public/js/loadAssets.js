@@ -1,5 +1,6 @@
 var loadAssets = function(cb){
 	PIXI.loader
+		.add('assets/carsprites.json')
 		.add('arrow', 'assets/arrow.png')
 		.add('bunny', 'assets/bunny.png')
 		.add('circle', 'assets/circle.png')
