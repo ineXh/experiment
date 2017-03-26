@@ -13,9 +13,10 @@ var scope_height = height*0.25;
 var center = null;
 var showStats = false;
 var car1, car2;
+var background;
 
 var spriteTouched = false;
-graphics = new PIXI.Graphics();
+//graphics = new PIXI.Graphics();
 
 (function(){
     //renderer = new PIXI.WebGLRenderer(800, 800, {backgroundColor : 0x59b4ff, transparent : false, antialias: false});
@@ -45,8 +46,8 @@ graphics = new PIXI.Graphics();
         sprite.y = 50;
         //sprite.scale.set(this.scale);
         stage.addChild(sprite);
-        stage.addChild(graphics);
-
+        //stage.addChild(graphics);
+        background = new Background();
         //spawnRect(stage, 50,50, width/2, 50);
 
         createWorld();

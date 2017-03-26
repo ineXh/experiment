@@ -74,7 +74,7 @@ function onTouchStart(event){
   //spawnCircle(stage, mousePos.x/METER, mousePos.y/METER, 85/2);
   //spawnTri(stage, mousePos.x/METER, mousePos.y/METER, 85, 85);
   //spawnPoly(stage, mousePos.x/METER, mousePos.y/METER, 5, 85/2);
-  createPoly(getRandomInt(3,8), mousePos.stage_x, mousePos.stage_y, getRandomArbitrary(0.5, 1)*width/10);
+  createPoly(getRandomInt(3,8), mousePos.stage_x, mousePos.stage_y, getRandomRange(0.5, 1)*width/10);
 
 } // end onTouchStart
 function onMultiTouchStart(event){
@@ -206,7 +206,7 @@ function getRngColor(r1,r2,g1,g2,b1,b2) {
     return 'rgb(' + r + ',' + g + ',' + b + ')';
 }
 // Returns a random number between min (inclusive) and max (exclusive)
-function getRandomArbitrary(min, max) {
+function getRandomRange(min, max) {
   return Math.random() * (max - min) + min;
 }
 function getRandomInt(min, max) {
@@ -432,19 +432,19 @@ function map(x, x_min, x_max, x_min_new, x_max_new){
 	return (pct * (x_max_new-x_min_new) + x_min_new);
 }
 function getRandomTop(){
-	var pos = new PVector(getRandomArbitrary(-stage.width*0.1, stage.width*1.1), -stage.height*0.1)
+	var pos = new PVector(getRandomRange(-stage.width*0.1, stage.width*1.1), -stage.height*0.1)
 	return pos;
 }
 function getRandomLeft(){
-	var pos = new PVector(-stage.width*0.1, getRandomArbitrary(-stage.height*0.1, stage.height*1.1))
+	var pos = new PVector(-stage.width*0.1, getRandomRange(-stage.height*0.1, stage.height*1.1))
 	return pos;
 }
 function getRandomRight(){
-	var pos = new PVector(stage.width*1.1, getRandomArbitrary(-stage.height*0.1, stage.height*1.1))
+	var pos = new PVector(stage.width*1.1, getRandomRange(-stage.height*0.1, stage.height*1.1))
 	return pos;
 }
 function getRandomBot(){
-	var pos = new PVector(getRandomArbitrary(-stage.width*0.1, stage.width*1.1), stage.height*1.1)
+	var pos = new PVector(getRandomRange(-stage.width*0.1, stage.width*1.1), stage.height*1.1)
 	return pos;
 }
 function getRandomBorder(){

@@ -73,7 +73,7 @@ Car.prototype = {
 
 	    // Wheel 1    
 	    var r = this.wheelR/METER;
-	    var x1 = -1.0;
+	    var x1 = -0.7;
 	    var y1 = -0.35;
 	    var cshape = new b2CircleShape();
 	    cshape.set_m_radius(r);
@@ -87,7 +87,7 @@ Car.prototype = {
 	    var fixtureDef = new b2FixtureDef();
 		fixtureDef.set_density( 1 );
 		fixtureDef.set_friction( 1 );
-		fixtureDef.set_restitution(0.4);
+		fixtureDef.set_restitution(0.3);
 		fixtureDef.set_shape( cshape );
 		fixture = wheelBody1.CreateFixture( fixtureDef );
 		
@@ -103,7 +103,7 @@ Car.prototype = {
 	    //shape.body = wheelBody1;
 
 	    // Wheel 2
-	    var x2 = 1.0;
+	    var x2 = 0.6;
 	    var y2 =-0.4;
 
 	    var wheelBody2 = world.CreateBody(bd);
@@ -172,8 +172,10 @@ function createCar(x, y){
 } // end createCar
 var motorSpeed = 0;
 function carSpeedUp(){
-	rearWheelJoint.SetMotorSpeed(++motorSpeed);
+	motorSpeed = (motorSpeed >= 40) ? motorSpeed : motorSpeed+2;
+	rearWheelJoint.SetMotorSpeed(motorSpeed);
 }
 function carSpeedDown(){
-	rearWheelJoint.SetMotorSpeed(--motorSpeed);
+	motorSpeed = (motorSpeed <= -40) ? motorSpeed : motorSpeed-2;
+	rearWheelJoint.SetMotorSpeed(motorSpeed);
 }

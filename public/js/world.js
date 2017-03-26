@@ -29,10 +29,13 @@ function createWorld() {
     var shape0 = new Box2D.b2EdgeShape();
     shape0.Set(new Box2D.b2Vec2(-40.0, -6), new Box2D.b2Vec2(40.0, -6));
 	ground.CreateFixture(shape0, 0.0);
-
+	
 	*/
 	//createStaticFloor();
-	for(var i = 0; i < 10; i++){
+	var side = width/25;
+	for(var i = 0; i < 2; i++){
+		//spawnRect(stage, width, -, side, side);
+		createPoly(3,width*5, -i*side-height*0.25, side, side);
 		//createBall(Math.random()*width, -getRandomInt(50,height/2), getRandomArbitrary(0.5, 1)*width/20);
 		//createRect(Math.random()*width, -getRandomInt(50,height/2), getRandomArbitrary(0.5, 1)*width/10, getRandomArbitrary(0.5, 1)*height/10);
 		//createPoly(getRandomInt(3,8), Math.random()*width, -getRandomInt(50,height/2), getRandomArbitrary(0.5, 1)*width/10);
@@ -114,8 +117,9 @@ function createGround(){
     				{x: 50*METER	, y: height*0.8 - 0.0*METER},
     				{x: 52*METER	, y: height*0.8 + 0.5*METER},
     				{x: 54*METER	, y: height*0.8 + 1.25*METER},
-    				{x: 400*METER	, y: height*0.8 + 1.25*METER},
-    				{x: 400*METER	, y: 0},
+    				{x: 75*METER	, y: height*0.5 + 1.25*METER},
+    				{x: 100*METER	, y: height*0.8 + 1.25*METER},
+    				{x: 100*METER	, y: 0},
     			 ];
 
     for (var i = 0; i < points.length-1; ++i){        
