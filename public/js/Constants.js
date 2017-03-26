@@ -1,5 +1,5 @@
 var METER = 100;
-
+var PI = Math.PI;
 function ShapeType(){}
 ShapeType.Invalid = -1;
 ShapeType.Circle = 0;

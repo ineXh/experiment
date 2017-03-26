@@ -75,6 +75,13 @@ function onTouchStart(event){
   //spawnTri(stage, mousePos.x/METER, mousePos.y/METER, 85, 85);
   //spawnPoly(stage, mousePos.x/METER, mousePos.y/METER, 5, 85/2);
   createPoly(getRandomInt(3,8), mousePos.stage_x, mousePos.stage_y, getRandomRange(0.5, 1)*width/10);
+  //createRect(mousePos.stage_x, mousePos.stage_y, width/2, height/20);
+  //createRect(mousePos.stage_x, mousePos.stage_y, width/2, height/20, Box2D.b2_staticBody);
+  //createStaticFloor(mousePos.stage_x, mousePos.stage_y, width/2, height/20);
+  //createSensorRect(mousePos.stage_x, mousePos.stage_y, width/2, height/20);
+  
+  
+
 
 } // end onTouchStart
 function onMultiTouchStart(event){

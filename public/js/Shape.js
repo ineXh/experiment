@@ -6,6 +6,8 @@ function Shape(){
 Shape.prototype = {
 	create: function(){
 		this.body = null;
+		this.fixture = null;
+		this.graphics = null;
 		this.pos = new PVector(0, 0);
 		this.vel = new PVector(0, 0);
 		this.accel = new PVector(0, 0);
@@ -83,7 +85,8 @@ Shape.prototype = {
 		this.container.addChild(this.graphics);
 	}, // end draw
 	drawCircle: function(){
-		this.graphics = new PIXI.Graphics();
+		if(this.graphics) this.graphics.clear();
+		else this.graphics = new PIXI.Graphics();
 	    this.graphics.x = this.pos.x;
 	    this.graphics.y = this.pos.y;
 		this.graphics.lineStyle(this.lineThick, this.strokeClr, 1);
@@ -105,7 +108,8 @@ Shape.prototype = {
 		this.context.closePath();
 	}, // end renderCircle
 	drawLine: function(){		
-		this.graphics = new PIXI.Graphics();
+		if(this.graphics) this.graphics.clear();
+		else this.graphics = new PIXI.Graphics();
 		this.graphics.lineStyle(this.lineThick, this.strokeClr, 1);
 		this.graphics.moveTo(this.points[0].x, this.points[0].y);
 		for(var i = 1; i < this.points.length; i++){
@@ -113,7 +117,8 @@ Shape.prototype = {
 		}
 	}, // end drawLine
 	drawRect: function(){
-		this.graphics = new PIXI.Graphics();
+		if(this.graphics) this.graphics.clear();
+		else this.graphics = new PIXI.Graphics();
 	    this.graphics.x = this.pos.x;
 	    this.graphics.y = this.pos.y;
 		this.graphics.lineStyle(this.lineThick, this.strokeClr, 1);
@@ -125,7 +130,8 @@ Shape.prototype = {
 		
 	}, // end drawRect
 	drawTri: function(){
-		this.graphics = new PIXI.Graphics();
+		if(this.graphics) this.graphics.clear();
+		else this.graphics = new PIXI.Graphics();
 	    this.graphics.x = this.pos.x;
 	    this.graphics.y = this.pos.y;
 		this.graphics.lineStyle(this.lineThick, this.strokeClr, 1);
@@ -141,7 +147,8 @@ Shape.prototype = {
 		this.graphics.lineTo(this.width/2/3*2, 0);
 	}, // end drawTri
 	drawPoly: function(){
-		this.graphics = new PIXI.Graphics();
+		if(this.graphics) this.graphics.clear();
+		else this.graphics = new PIXI.Graphics();
 	    this.graphics.x = this.pos.x;
 	    this.graphics.y = this.pos.y;
 		this.graphics.lineStyle(this.lineThick, this.strokeClr, 1);
@@ -166,7 +173,8 @@ Shape.prototype = {
 		}
 		vertices.push(this.points[0].x);
 		vertices.push(this.points[0].y);
-		this.graphics = new PIXI.Graphics();
+		if(this.graphics) this.graphics.clear();
+		else this.graphics = new PIXI.Graphics();
 	    this.graphics.x = this.pos.x;
 	    this.graphics.y = this.pos.y;
 		this.graphics.lineStyle(this.lineThick, this.strokeClr, 1);
@@ -174,6 +182,14 @@ Shape.prototype = {
     	this.graphics.drawPolygon(vertices);
     	this.graphics.endFill();
 	}, // end drawVertices
+	setRed(){
+		this.clr = 0xFF0000;
+		this.draw();
+	},
+	setRandomClr(){
+		this.clr = getRndColor();
+		this.draw();
+	},
 };
 var spawnCircle = function(container, x, y, r){
 	var shape = new Shape();
