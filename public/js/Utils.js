@@ -1,5 +1,5 @@
-var mousePos = {x: 0, y:0, x_pct: 0, y_pct: 0, px: 0, py: 0, sx: 0, sy: 0, raw_x: 0, raw_y: 0,
-				stage_x: 0, stage_y: 0, stage_x_pct:0, stage_y_pct:0, clicked: false, touched: false, multitouched: false};
+var mousePos = {x: 0, y:0, xPct: 0, yPct: 0, px: 0, py: 0, sx: 0, sy: 0, raw_x: 0, raw_y: 0,
+				stageX: 0, stageY: 0, stageXPct:0, stageYPct:0, clicked: false, touched: false, multitouched: false};
 function getMouse(event, touchobj){
 	//console.log(touchobj)
 	mousePos.px = mousePos.x;
@@ -23,12 +23,12 @@ function getMouse(event, touchobj){
   if(stage == undefined) return;
   mousePos.x = mousePos.x / stage.scale.x;
   mousePos.y = mousePos.y / stage.scale.y;
-	mousePos.x_pct = mousePos.x / width;
-	mousePos.y_pct = mousePos.y / height;
-	mousePos.stage_x = mousePos.x - stage.x / stage.scale.x;
-	mousePos.stage_y = mousePos.y - stage.y / stage.scale.y;
-	mousePos.stage_x_pct = mousePos.stage_x / stage.width;
-	mousePos.stage_y_pct = mousePos.stage_y / stage.height;
+	mousePos.xPct = mousePos.x / width;
+	mousePos.yPct = mousePos.y / height;
+	mousePos.stageX = mousePos.x - stage.x / stage.scale.x;
+	mousePos.stageY = mousePos.y - stage.y / stage.scale.y;
+	mousePos.stageXPct = mousePos.stageX / stage.width;
+	mousePos.stageYPct = mousePos.stageY / stage.height;
 
 }
 function getMouseBasic(event){
@@ -45,7 +45,7 @@ function onMouseStart(event){
 	getMouse(event, undefined);
 
 	mousePos.touched = true;
-  
+  if(verticesRecorder.add(mousePos.xPct, mousePos.yPct)) return;
 
 }
 function onMouseMove(event){
@@ -71,15 +71,16 @@ function onTouchStart(event){
 	getMouse(event, event.changedTouches[0]);
   mousePos.touched = true;
 
+  if(verticesRecorder.add(mousePos.stageX/width, mousePos.stageY/height)) return;
   //spawnCircle(stage, mousePos.x/METER, mousePos.y/METER, 85/2);
   //spawnTri(stage, mousePos.x/METER, mousePos.y/METER, 85, 85);
   //spawnPoly(stage, mousePos.x/METER, mousePos.y/METER, 5, 85/2);
-  createPoly(getRandomInt(3,8), mousePos.stage_x, mousePos.stage_y, getRandomRange(0.5, 1)*width/10);
-  //createRect(mousePos.stage_x, mousePos.stage_y, width/2, height/20);
-  //createRect(mousePos.stage_x, mousePos.stage_y, width/2, height/20, Box2D.b2_staticBody);
-  //createStaticFloor(mousePos.stage_x, mousePos.stage_y, width/2, height/20);
-  //createSensorRect(mousePos.stage_x, mousePos.stage_y, width/2, height/20);
-  
+  //createPoly(getRandomInt(3,8), mousePos.stageX, mousePos.stageY, getRandomRange(0.5, 1)*width/10);
+  //createRect(mousePos.stageX, mousePos.stageY, width/2, height/20);
+  //createRect(mousePos.stageX, mousePos.stageY, width/2, height/20, Box2D.b2_staticBody);
+  //createStaticFloor(mousePos.stageX, mousePos.stageY, width/2, height/20);
+  //createSensorRect(mousePos.stageX, mousePos.stageY, width/2, height/20);
+
   
 
 

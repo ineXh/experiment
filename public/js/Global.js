@@ -1,0 +1,2 @@
+// Modules
+var verticesRecorder = null;

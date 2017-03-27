@@ -63,6 +63,23 @@ function keyEvent(event) {
             center = null;
           }
           break;
+        case 106: // *
+          //record = !record;          
+          if(verticesRecorder){
+            verticesRecorder.record = !verticesRecorder.record;
+            console.log('record ' + verticesRecorder.record);
+          }           
+        break;
+        case 107: // +
+          // Flip draw on/off
+          if(verticesRecorder) verticesRecorder.draw(stage, !verticesRecorder.display);
+        break;
+        case 109: // -
+          if(verticesRecorder) verticesRecorder.clean();
+        break;
+        case 111: //  /   slash
+          if(verticesRecorder) verticesRecorder.export();
+        break;
         /*
         case 107:
         case 187: // + key        

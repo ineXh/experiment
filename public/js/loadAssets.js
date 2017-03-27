@@ -23,6 +23,8 @@ var loadAssets = function(cb){
 		.add('wheelFront4', 'assets/wheel_front_4.png')
 		.add('wheelFront5', 'assets/wheel_front_5.png')
 
+		.add('trackA', 'assets/trackA.png')
+
 		.load(cb.bind(this));
 
 } // end loadAssets
@@ -40,4 +42,5 @@ var loadTextures = function(){
     for(var i = 0; i <= 5; i++){
         wheelFrontTexture.push(PIXI.Texture.fromFrame('wheelFront' + i));
     }
+    
 } // end loadTextures

@@ -7,8 +7,8 @@ var ground;
 
 var shapes = [];
 var canvas;
-var width = 600;
-var height = 600;
+var width = 700;
+var height = 500;
 var scope_width = width*0.15;
 var scope_height = height*0.25;
 var center = null;
@@ -32,7 +32,7 @@ var spriteTouched = false;
         loadTextures();
         
         const container = document.createElement("div");
-        document.body.appendChild(container);        
+        document.body.appendChild(container);
         stats = new Stats();
         container.appendChild(stats.domElement);
         stats.domElement.style.position = "absolute";
@@ -53,6 +53,8 @@ var spriteTouched = false;
         //spawnRect(stage, 50,50, width/2, 50);
 
         createWorld();
+
+        verticesRecorder = new VerticesRecorder();
 
         animate();
     } // end initialize

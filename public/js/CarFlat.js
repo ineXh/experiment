@@ -35,8 +35,8 @@ CarFlat.prototype = {
         this.steerAngle = 0;
         this.max_steer_angle = 20;
 
-        this.width = width/10;
-        this.height = height/8;
+        this.width = width/20;
+        this.height = height/12;
         this.wheelWidth = this.width/5;
         this.wheelHeight = this.height/4;
 
@@ -75,7 +75,7 @@ CarFlat.prototype = {
         this.wheelFrontLSprite = new PIXI.extras.MovieClip(wheelFrontTexture);
         this.wheelFrontRSprite = new PIXI.extras.MovieClip(wheelFrontTexture);
 
-        this.sprite = buttonCreate(carBodyTexture, 0, 0, this.width);        
+        this.sprite = buttonCreate(carBodyTexture, 0, 0, this.width);
         this.sprite.anchor.x = this.sprite.anchor.y = 0.5;
         this.wheelBackLSprite.anchor.x = this.wheelBackLSprite.anchor.y = 0.5;
         this.wheelBackRSprite.anchor.x = this.wheelBackRSprite.anchor.y = 0.5;
@@ -122,7 +122,8 @@ CarFlat.prototype = {
 	init: function(x, y, container){
 		this.container = container;
 
-		this.scale(this.height);		
+		this.scale(this.height);
+		this.setAngle(-PI/2);
 		container.addChild(this.carContainer);		
 	},
 	update(){
@@ -152,19 +153,7 @@ CarFlat.prototype = {
 			velocity=new b2Vec2(this.vel.x, this.vel.y);
 	    	this.shape.body.SetLinearVelocity(velocity);
 			//console.log(this.carHeading)
-		}		
-		
-		//console.log(this.body.GetAngularVelocity());
-        /*var velocity=this.shape.body.GetLinearVelocity();
-	    this.vel.x = velocity.get_x();	this.vel.y = velocity.get_y();
-	    this.vel.y += this.speed;
-	    this.vel.limit(this.maxSpeed);
-	    velocity=new b2Vec2(this.vel.x, this.vel.y);
-	    this.shape.body.SetLinearVelocity(velocity);*/
-
-
-
-        //this.speed = this.vel.mag();
+		}				
         this.setWheelSpeed();
 	},
 	updateWheel: function(){ 
@@ -206,10 +195,14 @@ CarFlat.prototype = {
         //this.carHeadingPrev = this.carHeading;
         //console.log(this.carHeading);        
         //this.shape.body.SetTransform(this.shape.body.GetPosition(),
-        //	this.shape.body.GetAngle() + (this.carHeading - 3*PI/2));
+        //this.shape.body.GetAngle() + (this.carHeading - 3*PI/2));
 
         //this.carHeading += car1.shape.body.GetAngularVelocity();
     }, // end updateWheel
+    setAngle: function(angle){
+    	this.shape.body.SetTransform(this.shape.body.GetPosition(),
+        	angle);
+    },
     setWheelSpeed: function(){
         speed = this.speed / this.maxSpeed;
         if(Math.abs(speed) < 0.05){
