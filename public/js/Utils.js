@@ -510,6 +510,9 @@ function isBetween(p, a, b){
 function crossproduct(p, a, b){
 	return ((p.y - a.y) * (b.x - a.x) - (p.x - a.x) * (b.y - a.y));
 }
+function dot(v1, v2){
+   return (v1[0] * v2[0]) + (v1[1] * v2[1]);
+};
 
 function applyForce(force) {
     // We could add mass here if we want A = F / M
@@ -518,6 +521,19 @@ function applyForce(force) {
     //console.log(this.accel);
     this.accel.add(force);
   }
+function normaliseRadians(radians){
+    radians=radians % (2*Math.PI);
+    if(radians<0) {
+        radians+=(2*Math.PI);
+    }
+    return radians;
+};
+function vectorRotate(v, angle){
+  angle = normaliseRadians(angle);
+   return [v[0]* Math.cos(angle)-v[1]*Math.sin(angle),
+           v[0]* Math.sin(angle)+v[1]*Math.cos(angle)];
+}
+
 
 function simulateMouseEvent (event, simulatedType) {
         //console.log(event)

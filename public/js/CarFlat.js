@@ -1,3 +1,11 @@
+var ACC_NONE=0;
+var ACC_ACCELERATE=1;
+var ACC_BRAKE=2;
+
+var STEER_NONE=0;
+var STEER_RIGHT=1;
+var STEER_LEFT=2;
+
 function CarFlat(x,y){
 	this.create(x,y);
 }
@@ -11,19 +19,26 @@ CarFlat.prototype = {
         this.speed = 0;
 		this.maxSpeed = 4;
 
-		this.acceleration = height/10000;
+		this.power = 10;
+		this.max_speed = 60; // km/h
 
+		this.steer = STEER_NONE;
+		this.acceleration = height/10000;
+		this.accelerate = ACC_NONE;
 		this.angleTolerance = PI/240;
         this.angleSpeed = PI/600;
+        this.wheel_angle=0;
 
         this.carHeading = 3*PI/2;
+        this.carHeadingPrev = 3*PI/2;
         //this.carHeading = new PVector(0, -1);
         this.steerAngle = 0;
+        this.max_steer_angle = 20;
 
         this.width = width/10;
         this.height = height/8;
         this.wheelWidth = this.width/5;
-        this.wheelHeight = this.height/5;
+        this.wheelHeight = this.height/4;
 
 		this.shape = createRect(x,y, this.width, this.height);
 		this.body = this.shape.body;
@@ -37,8 +52,14 @@ CarFlat.prototype = {
     	this.shape.fixture.SetRestitution(0.4);
     	
     	this.wheels = [];
-    	wheel = new Wheel(x-this.width/2,y+this.height/2,true, true, this);
-    	wheel = new Wheel(x+this.width/2,y+this.height/2,true, true, this);
+    	//wheel = new Wheel(x-this.width/2,y+this.height/2,true, true, this);
+    	//this.wheels.push(wheel);
+    	//wheel = new Wheel(x+this.width/2,y+this.height/2,true, true, this);
+    	//this.wheels.push(wheel);
+    	//wheel = new Wheel(x-this.width/2,y-this.height/2,false, false, this);
+    	//this.wheels.push(wheel);
+    	//wheel = new Wheel(x+this.width/2,y-this.height/2,false, false, this);
+    	//this.wheels.push(wheel);
     	/*wheel = createRect(x-this.width/2,y+this.height/2, this.width/5, this.height/5);
     	wheel.fixture.SetSensor(true);
     	var jointdef = new b2RevoluteJointDef();
@@ -61,11 +82,11 @@ CarFlat.prototype = {
         this.wheelFrontLSprite.anchor.x = this.wheelFrontLSprite.anchor.y = 0.5;
         this.wheelFrontRSprite.anchor.x = this.wheelFrontRSprite.anchor.y = 0.5;
 
-        /*this.carContainer.addChild(this.sprite);
+        this.carContainer.addChild(this.sprite);
         this.carContainer.addChild(this.wheelBackLSprite);
         this.carContainer.addChild(this.wheelBackRSprite);
         this.carContainer.addChild(this.wheelFrontLSprite);
-        this.carContainer.addChild(this.wheelFrontRSprite);*/
+        this.carContainer.addChild(this.wheelFrontRSprite);
 	},
 	scale: function(height){
         scale = height / this.sprite.texture.height;
@@ -106,7 +127,7 @@ CarFlat.prototype = {
 	},
 	update(){
 		this.handleInput();
-		
+		this.updateWheel();
 		if(this.shape.body){
 			this.pos.x = this.shape.body.GetPosition().get_x()*METER;
 			this.pos.y = this.shape.body.GetPosition().get_y()*METER;
@@ -132,7 +153,8 @@ CarFlat.prototype = {
 	    	this.shape.body.SetLinearVelocity(velocity);
 			//console.log(this.carHeading)
 		}		
-		//this.updateWheel();
+		
+		//console.log(this.body.GetAngularVelocity());
         /*var velocity=this.shape.body.GetLinearVelocity();
 	    this.vel.x = velocity.get_x();	this.vel.y = velocity.get_y();
 	    this.vel.y += this.speed;
@@ -146,6 +168,8 @@ CarFlat.prototype = {
         this.setWheelSpeed();
 	},
 	updateWheel: function(){ 
+		this.carHeading = this.shape.body.GetAngle() + 3*PI/2;
+
         this.frontWheel.x = this.pos.x + this.wheelFrontLSprite.y*Math.cos(this.carHeading);
         this.frontWheel.y = this.pos.y + this.wheelFrontLSprite.y*Math.sin(this.carHeading);
 
@@ -162,7 +186,9 @@ CarFlat.prototype = {
         
         //this.shape.body.SetFixedRotation(this.carContainer.rotation);
         
-        this.shape.body.SetTransform(this.shape.body.GetPosition(), this.carHeading + PI/2);
+        //this.shape.body.SetTransform(this.shape.body.GetPosition(),
+        //	(this.carHeading + PI/2));
+
         //this.shape.body.SetTransform(this.shape.body.GetPosition(), this.shape.body.GetAngle());
         //body->SetAngularVelocity(0);
 
@@ -171,6 +197,17 @@ CarFlat.prototype = {
 
         this.carHeading = lock(Math.atan2( this.frontWheel.y - this.backWheel.y ,
                                       this.frontWheel.x - this.backWheel.x ));
+
+        this.shape.body.SetTransform(this.shape.body.GetPosition(),
+        	(this.carHeading) + PI/2);
+        //this.shape.body.SetTransform(this.shape.body.GetPosition(),
+        //	this.shape.body.GetAngle() + this.carHeading - this.carHeadingPrev);
+
+        //this.carHeadingPrev = this.carHeading;
+        //console.log(this.carHeading);        
+        //this.shape.body.SetTransform(this.shape.body.GetPosition(),
+        //	this.shape.body.GetAngle() + (this.carHeading - 3*PI/2));
+
         //this.carHeading += car1.shape.body.GetAngularVelocity();
     }, // end updateWheel
     setWheelSpeed: function(){
@@ -212,15 +249,17 @@ CarFlat.prototype = {
         }
         if(keys[38] || keys[87]){
             this.speedUp();
-        }
-        
-        if(keys[40] || keys[83]){
+            //console.log('speedup')
+        }else if(keys[40] || keys[83]){
             this.speedDown();
+        }else{
+        	this.accelerate = ACC_NONE;
         }
     }, // end handleInput
     turnLeft: function(){
         //this.steerAngle -= PI/120; //PI/60; //
         //if(this.steerAngle <= -PI/6) this.steerAngle = -PI/6;
+        this.steer = STEER_LEFT;
         this.steerAngle = -PI/6;
         this.wheelFrontLSprite.rotation = this.steerAngle;
         this.wheelFrontRSprite.rotation = this.steerAngle;
@@ -228,6 +267,7 @@ CarFlat.prototype = {
     turnRight: function(){
         //this.steerAngle += PI/120; //PI/60; //
         //if(this.steerAngle >= PI/6) this.steerAngle = PI/6;
+        this.steer = STEER_RIGHT;
         this.steerAngle = PI/6;
         this.wheelFrontLSprite.rotation = this.steerAngle;
         this.wheelFrontRSprite.rotation = this.steerAngle;
@@ -235,6 +275,7 @@ CarFlat.prototype = {
     straighten: function(){
         //this.steerAngle += PI/120; //PI/60; //
         //if(this.steerAngle >= PI/6) this.steerAngle = PI/6;
+        this.steer = STEER_NONE;
         this.steerAngle = 0;
         this.wheelFrontLSprite.rotation = this.steerAngle;
         this.wheelFrontRSprite.rotation = this.steerAngle;
@@ -261,6 +302,7 @@ CarFlat.prototype = {
 	},*/
 	speedUp(){
 		this.speed += this.acceleration;
+		this.accelerate = ACC_ACCELERATE;
         if(this.speed >= this.maxSpeed) this.speed = this.maxSpeed;
 		/*//console.log('up')
 		var velocity = this.shape.body.GetLinearVelocity();
@@ -283,6 +325,7 @@ CarFlat.prototype = {
 	},
 	speedDown(){
 		this.speed -= this.acceleration;
+		this.accelerate = ACC_BRAKE;
         if(this.speed <= -this.maxSpeed) this.speed = -this.maxSpeed;
 		/*//console.log('down')
 		var velocity=this.shape.body.GetLinearVelocity();
@@ -294,6 +337,135 @@ CarFlat.prototype = {
 	},
 } // end CarFlat
 
+
+CarFlat.prototype.getPoweredWheels=function(){
+    //return array of powered wheels
+    var retv=[];
+    for(var i=0;i<this.wheels.length;i++){
+        if(this.wheels[i].powered){
+            retv.push(this.wheels[i]);
+        }
+    }
+    return retv;
+};
+
+CarFlat.prototype.getLocalVelocity=function(){
+    /*
+    returns car's velocity vector relative to the car
+    */
+    //debugger;
+    var retv=this.body.GetLocalVector(
+    	this.body.GetLinearVelocityFromLocalPoint(new b2Vec2(0, 0)));
+    //console.log(retv)
+    return [retv.x, retv.y];
+};
+
+CarFlat.prototype.getRevolvingWheels=function(){
+    //return array of wheels that turn when steering
+    var retv=[];
+    for(var i=0;i<this.wheels.length;i++){
+        if(this.wheels[i].revolving){
+            retv.push(this.wheels[i]);
+        }
+    }
+    return retv;
+};
+
+CarFlat.prototype.getSpeedKMH=function(){
+    var velocity=this.body.GetLinearVelocity();
+    //var len=vectors.len([velocity.x, velocity.y]);
+    var len = 	velocity.get_x()*velocity.get_x() + 
+    			velocity.get_y()*velocity.get_y();
+   	len = Math.sqrt(len);
+   	//console.log(len)
+    return (len/1000)*3600;
+};
+
+CarFlat.prototype.setSpeed=function(speed){
+    /*
+    speed - speed in kilometers per hour
+    */
+    var velocity=this.body.GetLinearVelocity();
+    vel = new PVector(velocity.get_x(), velocity.get_y()).normalize();    
+    velocity=new b2Vec2(vel.x*((speed*1000.0)/3600.0),
+                              vel.y*((speed*1000.0)/3600.0));
+    this.body.SetLinearVelocity(velocity);
+
+};
+
+/*CarFlat.prototype.update=function(msDuration){
+    	msDuration = 20;
+
+    	this.handleInput();
+        //1. KILL SIDEWAYS VELOCITY
+        
+        //kill sideways velocity for all wheels
+        var i;
+        for(i=0;i<this.wheels.length;i++){
+            this.wheels[i].killSidewaysVelocity();
+        }
+    
+        //2. SET WHEEL ANGLE
+  
+        //calculate the change in wheel's angle for this update, assuming the wheel will reach is maximum angle from zero in 200 ms
+        var incr=(this.max_steer_angle/200) * msDuration;
+        
+        if(this.steer==STEER_RIGHT){ // Steer Right
+            this.wheel_angle=Math.min(Math.max(this.wheel_angle, 0)+incr, this.max_steer_angle) //increment angle without going over max steer
+            //debugger;
+        }else if(this.steer==STEER_LEFT){
+            this.wheel_angle=Math.max(Math.min(this.wheel_angle, 0)-incr, -this.max_steer_angle) //decrement angle without going over max steer
+            //debugger;
+        }else{
+            this.wheel_angle=0;        
+        }
+        //console.log(this.wheel_angle);
+
+        //update revolving wheels
+        var wheels=this.getRevolvingWheels();
+        for(i=0;i<wheels.length;i++){
+            wheels[i].setAngle(this.wheel_angle);
+            if(isNaN(wheels[i].body.GetPosition().get_x())) debugger;
+        }
+        
+        //3. APPLY FORCE TO WHEELS
+        var base_vect; //vector pointing in the direction force will be applied to a wheel ; relative to the wheel.
+        
+        //if accelerator is pressed down and speed limit has not been reached, go forwards
+        if((this.accelerate==ACC_ACCELERATE) && (this.getSpeedKMH() < this.max_speed)){
+            base_vect=[0, -1];            
+        }
+        else if(this.accelerate==ACC_BRAKE){
+            //braking, but still moving forwards - increased force
+            if(this.getLocalVelocity()[1]<0)base_vect=[0, 1.3];
+            //going in reverse - less force
+            else base_vect=[0, 0.7];
+        }
+        else base_vect=[0, 0];
+
+        //multiply by engine power, which gives us a force vector relative to the wheel
+        var fvect=[this.power*base_vect[0], this.power*base_vect[1]];
+
+        //apply force to each wheel
+        wheels=this.getPoweredWheels();
+        for(i=0;i<wheels.length;i++){
+           var position=wheels[i].body.GetWorldCenter();
+           //console.log(position.get_x())
+           //debugger;
+           //console.log(fvect);
+           //console.log(wheels[i].body.GetWorldVector(new b2Vec2(fvect[0], fvect[1])).get_y());
+           wheels[i].body.ApplyForce(wheels[i].body.GetWorldVector(new b2Vec2(fvect[0], fvect[1])), position );
+           if(isNaN(wheels[i].body.GetPosition().get_x())) debugger;
+        }
+        
+        //if going very slow, stop - to prevent endless sliding
+        if( (this.getSpeedKMH()<4) &&(!this.accelerating)){
+            this.setSpeed(0);
+        }
+        //console.log(wheels[0].body.GetPosition().get_x())
+        //console.log(wheels[0].body.GetPosition().get_y())
+        if(isNaN(wheels[1].body.GetPosition().get_x())) debugger;
+};*/
 function createCar(x, y){
 	
 } // end createCar

@@ -44,6 +44,7 @@ Shape.prototype = {
 		if(this.body != null){
 			this.pos.x = this.body.GetPosition().get_x()*METER;
 			this.pos.y = this.body.GetPosition().get_y()*METER;
+			if(isNaN(this.pos.x)) debugger;
 			this.graphics.x = this.pos.x;
 			this.graphics.y = this.pos.y;
 			this.graphics.rotation = this.body.GetAngle();

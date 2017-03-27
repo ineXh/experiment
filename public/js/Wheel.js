@@ -15,27 +15,32 @@ Wheel.prototype = {
 
     	var jointdef = new b2RevoluteJointDef();
     	jointdef.Initialize(car.shape.body, this.shape.body, this.shape.body.GetWorldCenter());
-    	jointdef.set_enableMotor(true);
+    	jointdef.set_enableMotor(true);    	
 	}, // end create
 	setAngle: function(angle){ // angle in radian
-		this.body.SetAngle(this.car.body.GetAngle() + angle);
+		//this.body.SetAngle(this.car.body.GetAngle() + angle);
+		if(isNaN(this.body.GetPosition().get_x())) debugger;
+		this.body.SetTransform(this.body.GetPosition(), this.car.body.GetAngle() + angle*2*PI/360);
 	},
 	getLocalVelocity: function(){
 		var res = this.car.body.GetLocalVector(
-			this.car.body.GetLinearVelocityFromLocalPoint(new box2d.b2Vec2(this.pos[0], this.pos[1])));
+			this.car.body.GetLinearVelocityFromLocalPoint(new b2Vec2(this.pos[0], this.pos[1])));
     	return [res.x, res.y];
 	}, // end getLocalVelocity
 	getDirectionVector: function(){
-		return vectors.rotate((this.getLocalVelocity()[1]>0) ? [0, 1]:[0, -1] , this.body.GetAngle()) ;
+		return vectorRotate((this.getLocalVelocity()[1]>0) ? [0, 1]:[0, -1] , this.body.GetAngle()) ;
 	}, // end getDirectionVector
 	getKillVelocityVector(){
 		var velocity=this.body.GetLinearVelocity();
 	    var sideways_axis=this.getDirectionVector();
-	    var dotprod=vectors.dot([velocity.x, velocity.y], sideways_axis);
+	    var dotprod = dot([velocity.get_x(), velocity.get_y()], sideways_axis);
+	    //debugger;
 	    return [sideways_axis[0]*dotprod, sideways_axis[1]*dotprod];
 	}, // end getKillVelocityVector
 	killSidewaysVelocity(){
 		var kv=this.getKillVelocityVector();
-    	this.body.SetLinearVelocity(new box2d.b2Vec2(kv[0], kv[1]));
+		//console.log(kv);
+    	this.body.SetLinearVelocity(new b2Vec2(kv[0], kv[1]));
+    	if(isNaN(this.body.GetPosition().get_x())) debugger;
 	}, // end killSidewaysVelocity
 } // end Wheel

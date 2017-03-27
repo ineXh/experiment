@@ -29,8 +29,8 @@ function createWorld() {
 	car1 = new CarFlat(width/2, height/2);
     car1.init(0,0, stage);
 
-    //car2 = new CarFlat(width/2, height/2);
-    //car2.init(0,0, stage);
+    car2 = new CarFlat(width/2, height/2);
+    car2.init(0,0, stage);
 
     //createCar(0, 0);
 	//stage.x = 200;
@@ -299,7 +299,7 @@ function step(timestamp) {
     
     /*if ( currentTest && currentTest.step ) 
         currentTest.step();*/
-    
+    //console.log('step')
     if ( ! showStats ) {
         world.Step(1/60, 2, 2);
         draw();
@@ -317,6 +317,7 @@ function step(timestamp) {
         updateStats();
         statusUpdateCounter = 0;
     }
+
 }
 
 function draw(){
