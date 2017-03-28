@@ -640,7 +640,9 @@ var wipe = function (obj){
             delete obj[p];
     }
 };
-
+function isEmpty(obj){
+  return (Object.keys(obj).length === 0 && obj.constructor === Object);
+}
 var indexOf = function(arr, item) {
   for (var i=0, len=arr.length; i!=len ; i++) {
     if (arr[i] === item) { return i }

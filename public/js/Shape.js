@@ -1,10 +1,12 @@
-var shapeTemplate = {x: 0, y: 0, r: 0, width: 0, height: 0, numVerts: 0, type: ShapeType.Invalid,
+var shapeTemplate = {x: 0, y: 0, r: 0, width: 0, height: 0, numVerts: 0, shapeType: ShapeType.Invalid,
 					points: []};
 function Shape(){
 	this.create();
 }
 Shape.prototype = {
 	create: function(){
+		this.boxObjectType = BoxObjectType.Invalid;
+
 		this.body = null;
 		this.fixture = null;
 		this.graphics = null;
@@ -18,14 +20,14 @@ Shape.prototype = {
 		this.points = [];
 		//this.sprite = buttonCreate(resources.circle.texture, 0, 0, this.r*2);		
 	},
-	init: function(container, input){//x, y, type){
+	init: function(container, input){//x, y, shapeType){
 		this.pos.x = input.x;
 		this.pos.y = input.y;
 		//this.maxSpeed = context.canvas.width/20;
 		this.clr = getRndColor();
 		this.strokeClr = getRndColor();
 
-		this.type = input.type;
+		this.shapeType = input.shapeType;
 		this.r = input.r;
 		this.width = input.width;
 		this.height = input.height;
@@ -38,6 +40,12 @@ Shape.prototype = {
 		//console.log(this.clr)
 		this.draw();
 		this.graphics.alpha = this.alpha;
+	},
+	clean: function(){
+		if(this.graphics) this.container.removeChild(this.graphics);
+		this.graphics = null;
+		this.container = null;
+		this.boxObjectType = BoxObjectType.Invalid;
 	},
 	update: function(){
 		//this.move();
@@ -61,7 +69,7 @@ Shape.prototype = {
 		//if(this.border)   this.stayinBorder();
 	},
 	draw: function(){
-		switch(this.type){
+		switch(this.shapeType){
 			case ShapeType.Circle:
 				this.drawCircle();
 			break;
@@ -197,14 +205,14 @@ var spawnCircle = function(container, x, y, r){
 	shapeTemplate.x = x;
 	shapeTemplate.y = y;
 	shapeTemplate.r = r;
-	shapeTemplate.type = ShapeType.Circle;
+	shapeTemplate.shapeType = ShapeType.Circle;
 	shape.init(container, shapeTemplate);
 	shapes.push(shape);
 	return shape;
 }
 var spawnLine = function(container, points){
 	var shape = new Shape();
-	shapeTemplate.type = ShapeType.Line;
+	shapeTemplate.shapeType = ShapeType.Line;
 	shapeTemplate.points = points;
 	shape.init(container, shapeTemplate);
 	shapes.push(shape);
@@ -216,7 +224,7 @@ var spawnPoly = function(container, x, y, numVerts, r){
 	shapeTemplate.y = y;
 	shapeTemplate.numVerts = numVerts;
 	shapeTemplate.r = r;
-	shapeTemplate.type = ShapeType.Poly;
+	shapeTemplate.shapeType = ShapeType.Poly;
 	shape.init(container, shapeTemplate);
 	shapes.push(shape);
 	return shape;
@@ -225,7 +233,7 @@ var spawnRect = function(container, x,y,width, height){
 	var shape = new Shape();
     shapeTemplate.x = x;
     shapeTemplate.y = y;
-    shapeTemplate.type = ShapeType.Rect;
+    shapeTemplate.shapeType = ShapeType.Rect;
     shapeTemplate.width = width;
     shapeTemplate.height = height;
     shape.init(container, shapeTemplate);
@@ -236,7 +244,7 @@ var spawnTri = function(container, x,y,width, height){
 	var shape = new Shape();
     shapeTemplate.x = x;
     shapeTemplate.y = y;
-    shapeTemplate.type = ShapeType.Tri;
+    shapeTemplate.shapeType = ShapeType.Tri;
     shapeTemplate.width = width;
     shapeTemplate.height = height;
     shape.init(container, shapeTemplate);
@@ -247,7 +255,7 @@ var spawnVertices = function(container, x, y, points){
 	var shape = new Shape();
 	shapeTemplate.x = x;
     shapeTemplate.y = y;
-	shapeTemplate.type = ShapeType.Vertices;
+	shapeTemplate.shapeType = ShapeType.Vertices;
 	shapeTemplate.points = points;
 	shape.init(container, shapeTemplate);
 	shapes.push(shape);

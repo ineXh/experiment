@@ -11,6 +11,8 @@ function CarFlat(x,y){
 }
 CarFlat.prototype = {
 	create: function(x,y){
+        this.boxObjectType = BoxObjectType.Car;
+
 		this.pos = new PVector(0, 0);
         this.frontWheel = new PVector(0, 0);
         this.backWheel = new PVector(0, 0);
@@ -35,12 +37,20 @@ CarFlat.prototype = {
         this.steerAngle = 0;
         this.max_steer_angle = 20;
 
+        this.offRoad = false;
+        this.offRoadFactor = 0.95;
+        this.colliders = {};
+        this.colliders[BoxObjectType.Field] = {};
+
         this.width = width/20;
         this.height = height/12;
         this.wheelWidth = this.width/5;
         this.wheelHeight = this.height/4;
 
 		this.shape = createRect(x,y, this.width, this.height);
+        this.shape.boxObjectType = BoxObjectType.Car;
+        this.shape.parent = this;
+
 		this.body = this.shape.body;
 
 		this.shape.body.SetLinearDamping(0.8);  //gradually reduces velocity, makes the car reduce speed slowly if neither accelerator nor brake is pressed
@@ -145,6 +155,12 @@ CarFlat.prototype = {
 			//this.speed = this.vel.dot(heading);
 			//console.log(this.vel.dot(heading));
 			this.speed *= 0.99;
+            
+
+            if(this.offRoad){
+                this.speed *= this.offRoadFactor;
+                if(isEmpty(this.colliders[BoxObjectType.Field])) this.offRoad = false;
+            }
 
 			this.vel.x = -this.speed*Math.cos(this.carHeading);
 			this.vel.y = -this.speed*Math.sin(this.carHeading);
