@@ -6,7 +6,7 @@ function Shape(){
 Shape.prototype = {
 	create: function(){
 		this.boxObjectType = BoxObjectType.Invalid;
-
+		this.usedForDebug = false;
 		this.body = null;
 		this.fixture = null;
 		this.graphics = null;
@@ -20,19 +20,21 @@ Shape.prototype = {
 		this.points = [];
 		//this.sprite = buttonCreate(resources.circle.texture, 0, 0, this.r*2);		
 	},
-	init: function(container, input){//x, y, shapeType){
+	init: function(container, input, usedForDebug){//x, y, shapeType){
+		this.usedForDebug = usedForDebug;
 		this.pos.x = input.x;
 		this.pos.y = input.y;
-		//this.maxSpeed = context.canvas.width/20;
-		this.clr = getRndColor();
-		this.strokeClr = getRndColor();
-
 		this.shapeType = input.shapeType;
 		this.r = input.r;
 		this.width = input.width;
 		this.height = input.height;
 		this.numVerts = input.numVerts;
 		this.container = container;
+
+		if(usedForDebug && !debug) return;
+	
+		this.clr = getRndColor();
+		this.strokeClr = getRndColor();
 
 		for(var i = 0; i < input.points.length; i++){
 			this.points[i] = new PVector(input.points[i].x, input.points[i].y);
@@ -49,6 +51,7 @@ Shape.prototype = {
 	},
 	update: function(){
 		//this.move();
+		if(this.usedForDebug && !debug) return;
 		if(this.body != null){
 			this.pos.x = this.body.GetPosition().get_x()*METER;
 			this.pos.y = this.body.GetPosition().get_y()*METER;
@@ -229,35 +232,38 @@ var spawnPoly = function(container, x, y, numVerts, r){
 	shapes.push(shape);
 	return shape;
 }
-var spawnRect = function(container, x,y,width, height){
+var spawnRect = function(container, x,y,width, height, usedForDebug){
 	var shape = new Shape();
     shapeTemplate.x = x;
     shapeTemplate.y = y;
     shapeTemplate.shapeType = ShapeType.Rect;
     shapeTemplate.width = width;
     shapeTemplate.height = height;
-    shape.init(container, shapeTemplate);
+    if(usedForDebug == undefined) usedForDebug = false;
+    shape.init(container, shapeTemplate, usedForDebug);
     shapes.push(shape);
     return shape;
 }
-var spawnTri = function(container, x,y,width, height){
+var spawnTri = function(container, x,y,width, height, usedForDebug){
 	var shape = new Shape();
     shapeTemplate.x = x;
     shapeTemplate.y = y;
     shapeTemplate.shapeType = ShapeType.Tri;
     shapeTemplate.width = width;
     shapeTemplate.height = height;
-    shape.init(container, shapeTemplate);
+    if(usedForDebug == undefined) usedForDebug = false;
+    shape.init(container, shapeTemplate, usedForDebug);
     shapes.push(shape);
     return shape;
 }
-var spawnVertices = function(container, x, y, points){
+var spawnVertices = function(container, x, y, points, usedForDebug){
 	var shape = new Shape();
 	shapeTemplate.x = x;
     shapeTemplate.y = y;
 	shapeTemplate.shapeType = ShapeType.Vertices;
 	shapeTemplate.points = points;
-	shape.init(container, shapeTemplate);
+	if(usedForDebug == undefined) usedForDebug = false;
+	shape.init(container, shapeTemplate, usedForDebug);
 	shapes.push(shape);
 	return shape;
 }

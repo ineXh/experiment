@@ -4,6 +4,7 @@ using(Box2D, "b2.+");
 
 var bodies = [];
 
+
 function createWorld() {
 	this.bgSprite = buttonCreate(PIXI.Texture.fromFrame("trackA"),
                      width/2, height/2, this.width);
@@ -22,13 +23,13 @@ function createWorld() {
     } */   
     createField(StageData[0].out);
 
-	car1 = new CarFlat(width/2, height/2);
+	car1 = new CarFlat(width/2, height*0.3);
     car1.init(0,0, stage);
 
     //car2 = new CarFlat(width/2, height/2);
     //car2.init(0,0, stage);
 
-    //createSensorRect(width*0.5, height*0.3,width/20,height/5);
+    //createTrackTrigger(width*0.5, height*0.3,width/20,height/5);
 
     //createCar(0, 0);
 	//stage.x = 200;
@@ -116,7 +117,8 @@ function createField(verticesArray){
            
         fixture = body.CreateFixture( fixtureDef );    
 
-        shape = spawnVertices(stage, 0, 0, points[i]);
+        usedForDebug = true;
+        shape = spawnVertices(stage, 0, 0, points[i], usedForDebug);
         shape.body = body;
         shape.fixture = fixture;
         fixture.shape = shape;
@@ -242,6 +244,7 @@ function createStaticFloor(x,y,w,h){
 function createSensorRect(x,y,w,h){
     shape = createStaticFloor(x,y,w,h);        
     shape.fixture.SetSensor(true);
+    return shape;
 }
 
 function createBall(x, y, r){//world, x, y) {
