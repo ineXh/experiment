@@ -20,6 +20,8 @@ var spriteTouched = false;
 //graphics = new PIXI.Graphics();
 
 (function(){
+    window.scrollTo(0,1);
+    document.body.style.overflow = 'hidden';
     //renderer = new PIXI.WebGLRenderer(800, 800, {backgroundColor : 0x59b4ff, transparent : false, antialias: false});
     renderer = PIXI.autoDetectRenderer(width, height ,{backgroundColor : 0x59b4ff, antialias: false});//LightCyan});//'Black'});GrassColor 0x4F8EDB
 	var canvas1 = document.getElementById("canvas1");

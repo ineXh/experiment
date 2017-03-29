@@ -75,7 +75,7 @@ function onTouchStart(event){
   //spawnCircle(stage, mousePos.x/METER, mousePos.y/METER, 85/2);
   //spawnTri(stage, mousePos.x/METER, mousePos.y/METER, 85, 85);
   //spawnPoly(stage, mousePos.x/METER, mousePos.y/METER, 5, 85/2);
-  //createPoly(getRandomInt(3,8), mousePos.stageX, mousePos.stageY, getRandomRange(0.5, 1)*width/10);
+  createPoly(getRandomInt(3,8), mousePos.stageX, mousePos.stageY, getRandomRange(0.5, 1)*width/10);
   //createRect(mousePos.stageX, mousePos.stageY, width/2, height/20);
   //createRect(mousePos.stageX, mousePos.stageY, width/2, height/20, Box2D.b2_staticBody);
   //createStaticFloor(mousePos.stageX, mousePos.stageY, width/2, height/20);

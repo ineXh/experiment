@@ -23,10 +23,10 @@ function createWorld() {
     } */   
     createField(StageData[0].out);
 
-	car1 = new CarFlat(width/2, height*0.3);
+	car1 = new CarFlat(width/2, height*0.2);
     car1.init(0,0, stage);
 
-    car2 = new Car2D(width/2, height*0.3);
+    //car2 = new Car2D(width/2, height*0.3);
     
 
 

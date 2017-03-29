@@ -25,7 +25,7 @@ CarFlat.prototype = {
 		this.max_speed = 60; // km/h
 
 		this.steer = STEER_NONE;
-		this.acceleration = height/10000;
+		this.acceleration = width/20000;
 		this.accelerate = ACC_NONE;
 		this.angleTolerance = PI/240;
         this.angleSpeed = PI/600;
@@ -38,12 +38,12 @@ CarFlat.prototype = {
         this.max_steer_angle = 20;
 
         this.offRoad = false;
-        this.offRoadFactor = 0.99;
+        this.offRoadFactor = 0.97;//0.97;
         this.colliders = {};
         this.colliders[BoxObjectType.Field] = {};
 
-        this.width = width/20;
-        this.height = height/12;
+        this.width = width/40;
+        this.height = height/24;
         this.wheelWidth = this.width/5;
         this.wheelHeight = this.height/4;
 
@@ -54,13 +54,29 @@ CarFlat.prototype = {
 
 		this.body = this.shape.body;
 
-		this.shape.body.SetLinearDamping(0.8);  //gradually reduces velocity, makes the car reduce speed slowly if neither accelerator nor brake is pressed
+		this.shape.body.SetLinearDamping(0.7);  //gradually reduces velocity, makes the car reduce speed slowly if neither accelerator nor brake is pressed
     	this.shape.body.SetBullet(true); //dedicates more time to collision detection - car travelling at high speeds at low framerates otherwise might teleport through obstacles.
-    	this.shape.body.SetAngularDamping(0.3);
+    	this.shape.body.SetAngularDamping(0.1);
 
     	this.shape.fixture.SetDensity(1);
     	this.shape.fixture.SetFriction(0.3);
     	this.shape.fixture.SetRestitution(0.4);
+
+        if(debug){
+            this.line = new PIXI.Graphics();
+            this.line.lineStyle(5, 0xFF0000, 1);
+            this.line.moveTo(0, 0);
+            this.line.lineTo(-50, 0);
+
+            this.line2 = new PIXI.Graphics();
+            this.line2.lineStyle(5, 0x00FF00, 1);
+            this.line2.moveTo(0, 0);
+            this.line2.lineTo(-50, 0);
+        }
+
+        this.driftLine = new PIXI.Graphics();
+        this.driftLine.lineStyle(5, 0x00, 1);
+
     	
     	this.wheels = [];
     	//wheel = new Wheel(x-this.width/2,y+this.height/2,true, true, this);
@@ -135,7 +151,14 @@ CarFlat.prototype = {
 
 		this.scale(this.height);
 		this.setAngle(-PI/2);
-		container.addChild(this.carContainer);		
+		container.addChild(this.carContainer);
+        if(debug) container.addChild(this.line);
+        if(debug) container.addChild(this.line2);
+        container.addChild(this.driftLine);
+
+        this.text = new PIXI.Text();
+        this.text.text = "Hey";
+        container.addChild(this.text);
 	},
 	update(){
 		this.handleInput();
@@ -151,26 +174,49 @@ CarFlat.prototype = {
 			//rotation = this.carContainer.rotation + this.steerAngle;
 			var velocity=this.shape.body.GetLinearVelocity();			
 			this.vel.x = velocity.get_x();	this.vel.y = velocity.get_y();
+            if(debug){
+                this.line2.x = this.pos.x;
+                this.line2.y = this.pos.y;
+                this.line2.rotation = PVector.angleBetween(this.vel, new PVector(-1,0));
+            }            
 
 			var heading = new PVector.fromAngle(this.carHeading);
 			//this.speed = this.vel.dot(heading);
 			//console.log(this.vel.dot(heading));
-			this.speed *= 0.99;
-            
-
+			this.speed = this.vel.mag();
+            this.text.text = this.speed;
+            //console.log(this.speed);
+            //this.speed *= 0.999;            
             if(this.offRoad){
                 this.speed *= this.offRoadFactor;
                 if(isEmpty(this.colliders[BoxObjectType.Field])) this.offRoad = false;
             }
 
-			this.vel.x = -this.speed*Math.cos(this.carHeading);
-			this.vel.y = -this.speed*Math.sin(this.carHeading);
+            this.vel.normalize();
+            this.vel.mult(this.speed);
+			//this.vel.x = -this.speed*Math.cos(this.carHeading + this.steerAngle);
+			//this.vel.y = -this.speed*Math.sin(this.carHeading + this.steerAngle);
+
+            //this.vel.mult(this.speed);
+            acceleration = (this.accelerate == ACC_ACCELERATE)? this.acceleration: 
+                            (this.accelerate == ACC_BRAKE)? -this.acceleration*0.3: 0;
+            this.vel.x += -acceleration*Math.cos(this.carHeading + this.steerAngle);
+            this.vel.y += -acceleration*Math.sin(this.carHeading + this.steerAngle);
 			//console.log(this.speed);
 			this.vel.limit(this.maxSpeed);
 			velocity=new b2Vec2(this.vel.x, this.vel.y);
 	    	this.shape.body.SetLinearVelocity(velocity);
 			//console.log(this.carHeading)
-		}				
+		}
+        if(debug){
+            this.line.x = this.pos.x;
+            this.line.y = this.pos.y;
+            this.line.rotation = this.carHeading + this.steerAngle;    
+        }
+        
+        //this.driftLine.moveTo(this.pos.x, this.pos.y);
+        //this.driftLine.lineTo(this.pos.x + this.vel.x, this.pos.y + this.vel.y);
+
         this.setWheelSpeed();
 	},
 	updateWheel: function(){ 
@@ -187,6 +233,9 @@ CarFlat.prototype = {
 
         this.backWheel.x += this.speed *Math.cos(this.carHeading);
         this.backWheel.y += this.speed *Math.sin(this.carHeading);
+
+        this.driftLine.moveTo(this.backWheel.x, this.backWheel.y);
+        this.driftLine.lineTo(this.backWheel.x + this.vel.x, this.backWheel.y + this.vel.y);
 
         //this.carContainer.rotation = this.carHeading + PI/2;
         
