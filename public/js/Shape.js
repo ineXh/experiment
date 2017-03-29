@@ -1,11 +1,15 @@
-var shapeTemplate = {x: 0, y: 0, r: 0, width: 0, height: 0, numVerts: 0, type: ShapeType.Invalid,
+var shapeTemplate = {x: 0, y: 0, r: 0, width: 0, height: 0, numVerts: 0, shapeType: ShapeType.Invalid,
 					points: []};
 function Shape(){
 	this.create();
 }
 Shape.prototype = {
 	create: function(){
+		this.boxObjectType = BoxObjectType.Invalid;
+		this.usedForDebug = false;
 		this.body = null;
+		this.fixture = null;
+		this.graphics = null;
 		this.pos = new PVector(0, 0);
 		this.vel = new PVector(0, 0);
 		this.accel = new PVector(0, 0);
@@ -16,19 +20,21 @@ Shape.prototype = {
 		this.points = [];
 		//this.sprite = buttonCreate(resources.circle.texture, 0, 0, this.r*2);		
 	},
-	init: function(container, input){//x, y, type){
+	init: function(container, input, usedForDebug){//x, y, shapeType){
+		this.usedForDebug = usedForDebug;
 		this.pos.x = input.x;
 		this.pos.y = input.y;
-		//this.maxSpeed = context.canvas.width/20;
-		this.clr = getRndColor();
-		this.strokeClr = getRndColor();
-
-		this.type = input.type;
+		this.shapeType = input.shapeType;
 		this.r = input.r;
 		this.width = input.width;
 		this.height = input.height;
 		this.numVerts = input.numVerts;
 		this.container = container;
+
+		if(usedForDebug && !debug) return;
+	
+		this.clr = getRndColor();
+		this.strokeClr = getRndColor();
 
 		for(var i = 0; i < input.points.length; i++){
 			this.points[i] = new PVector(input.points[i].x, input.points[i].y);
@@ -37,15 +43,27 @@ Shape.prototype = {
 		this.draw();
 		this.graphics.alpha = this.alpha;
 	},
+	clean: function(){
+		if(this.graphics) this.container.removeChild(this.graphics);
+		this.graphics = null;
+		this.container = null;
+		this.boxObjectType = BoxObjectType.Invalid;
+	},
 	update: function(){
-		//this.move();
+		//this.move();		
 		if(this.body != null){
 			this.pos.x = this.body.GetPosition().get_x()*METER;
 			this.pos.y = this.body.GetPosition().get_y()*METER;
+			if(isNaN(this.pos.x)) debugger;
+			if(this.usedForDebug && !debug) return;
 			this.graphics.x = this.pos.x;
 			this.graphics.y = this.pos.y;
 			this.graphics.rotation = this.body.GetAngle();
 		}else{this.move();}
+	},
+	setAngle: function(angle){
+		if(this.body)
+			this.body.SetTransform(this.body.GetPosition(), angle);
 	},
 	move: function(time){
 		this.vel.add(this.accel);
@@ -58,7 +76,7 @@ Shape.prototype = {
 		//if(this.border)   this.stayinBorder();
 	},
 	draw: function(){
-		switch(this.type){
+		switch(this.shapeType){
 			case ShapeType.Circle:
 				this.drawCircle();
 			break;
@@ -83,7 +101,8 @@ Shape.prototype = {
 		this.container.addChild(this.graphics);
 	}, // end draw
 	drawCircle: function(){
-		this.graphics = new PIXI.Graphics();
+		if(this.graphics) this.graphics.clear();
+		else this.graphics = new PIXI.Graphics();
 	    this.graphics.x = this.pos.x;
 	    this.graphics.y = this.pos.y;
 		this.graphics.lineStyle(this.lineThick, this.strokeClr, 1);
@@ -105,7 +124,8 @@ Shape.prototype = {
 		this.context.closePath();
 	}, // end renderCircle
 	drawLine: function(){		
-		this.graphics = new PIXI.Graphics();
+		if(this.graphics) this.graphics.clear();
+		else this.graphics = new PIXI.Graphics();
 		this.graphics.lineStyle(this.lineThick, this.strokeClr, 1);
 		this.graphics.moveTo(this.points[0].x, this.points[0].y);
 		for(var i = 1; i < this.points.length; i++){
@@ -113,7 +133,8 @@ Shape.prototype = {
 		}
 	}, // end drawLine
 	drawRect: function(){
-		this.graphics = new PIXI.Graphics();
+		if(this.graphics) this.graphics.clear();
+		else this.graphics = new PIXI.Graphics();
 	    this.graphics.x = this.pos.x;
 	    this.graphics.y = this.pos.y;
 		this.graphics.lineStyle(this.lineThick, this.strokeClr, 1);
@@ -125,7 +146,8 @@ Shape.prototype = {
 		
 	}, // end drawRect
 	drawTri: function(){
-		this.graphics = new PIXI.Graphics();
+		if(this.graphics) this.graphics.clear();
+		else this.graphics = new PIXI.Graphics();
 	    this.graphics.x = this.pos.x;
 	    this.graphics.y = this.pos.y;
 		this.graphics.lineStyle(this.lineThick, this.strokeClr, 1);
@@ -141,7 +163,8 @@ Shape.prototype = {
 		this.graphics.lineTo(this.width/2/3*2, 0);
 	}, // end drawTri
 	drawPoly: function(){
-		this.graphics = new PIXI.Graphics();
+		if(this.graphics) this.graphics.clear();
+		else this.graphics = new PIXI.Graphics();
 	    this.graphics.x = this.pos.x;
 	    this.graphics.y = this.pos.y;
 		this.graphics.lineStyle(this.lineThick, this.strokeClr, 1);
@@ -166,7 +189,8 @@ Shape.prototype = {
 		}
 		vertices.push(this.points[0].x);
 		vertices.push(this.points[0].y);
-		this.graphics = new PIXI.Graphics();
+		if(this.graphics) this.graphics.clear();
+		else this.graphics = new PIXI.Graphics();
 	    this.graphics.x = this.pos.x;
 	    this.graphics.y = this.pos.y;
 		this.graphics.lineStyle(this.lineThick, this.strokeClr, 1);
@@ -174,20 +198,28 @@ Shape.prototype = {
     	this.graphics.drawPolygon(vertices);
     	this.graphics.endFill();
 	}, // end drawVertices
+	setRed(){
+		this.clr = 0xFF0000;
+		this.draw();
+	},
+	setRandomClr(){
+		this.clr = getRndColor();
+		this.draw();
+	},
 };
 var spawnCircle = function(container, x, y, r){
 	var shape = new Shape();
 	shapeTemplate.x = x;
 	shapeTemplate.y = y;
 	shapeTemplate.r = r;
-	shapeTemplate.type = ShapeType.Circle;
+	shapeTemplate.shapeType = ShapeType.Circle;
 	shape.init(container, shapeTemplate);
 	shapes.push(shape);
 	return shape;
 }
 var spawnLine = function(container, points){
 	var shape = new Shape();
-	shapeTemplate.type = ShapeType.Line;
+	shapeTemplate.shapeType = ShapeType.Line;
 	shapeTemplate.points = points;
 	shape.init(container, shapeTemplate);
 	shapes.push(shape);
@@ -199,40 +231,43 @@ var spawnPoly = function(container, x, y, numVerts, r){
 	shapeTemplate.y = y;
 	shapeTemplate.numVerts = numVerts;
 	shapeTemplate.r = r;
-	shapeTemplate.type = ShapeType.Poly;
+	shapeTemplate.shapeType = ShapeType.Poly;
 	shape.init(container, shapeTemplate);
 	shapes.push(shape);
 	return shape;
 }
-var spawnRect = function(container, x,y,width, height){
+var spawnRect = function(container, x,y,width, height, usedForDebug){
 	var shape = new Shape();
     shapeTemplate.x = x;
     shapeTemplate.y = y;
-    shapeTemplate.type = ShapeType.Rect;
+    shapeTemplate.shapeType = ShapeType.Rect;
     shapeTemplate.width = width;
     shapeTemplate.height = height;
-    shape.init(container, shapeTemplate);
+    if(usedForDebug == undefined) usedForDebug = false;
+    shape.init(container, shapeTemplate, usedForDebug);
     shapes.push(shape);
     return shape;
 }
-var spawnTri = function(container, x,y,width, height){
+var spawnTri = function(container, x,y,width, height, usedForDebug){
 	var shape = new Shape();
     shapeTemplate.x = x;
     shapeTemplate.y = y;
-    shapeTemplate.type = ShapeType.Tri;
+    shapeTemplate.shapeType = ShapeType.Tri;
     shapeTemplate.width = width;
     shapeTemplate.height = height;
-    shape.init(container, shapeTemplate);
+    if(usedForDebug == undefined) usedForDebug = false;
+    shape.init(container, shapeTemplate, usedForDebug);
     shapes.push(shape);
     return shape;
 }
-var spawnVertices = function(container, x, y, points){
+var spawnVertices = function(container, x, y, points, usedForDebug){
 	var shape = new Shape();
 	shapeTemplate.x = x;
     shapeTemplate.y = y;
-	shapeTemplate.type = ShapeType.Vertices;
+	shapeTemplate.shapeType = ShapeType.Vertices;
 	shapeTemplate.points = points;
-	shape.init(container, shapeTemplate);
+	if(usedForDebug == undefined) usedForDebug = false;
+	shape.init(container, shapeTemplate, usedForDebug);
 	shapes.push(shape);
 	return shape;
 }

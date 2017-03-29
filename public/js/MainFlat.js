@@ -1,13 +1,14 @@
 var ctx;
 var background_clr = "#88B4FF";//"#00";//"#AA8844";
 var world;// = createWorld();
+var listener;
 var mouseJointGroundBody;
 var ground;
 
 var shapes = [];
 var canvas;
-var width = 600;
-var height = 600;
+var width = 700;
+var height = 500;
 var scope_width = width*0.15;
 var scope_height = height*0.25;
 var center = null;
@@ -19,6 +20,8 @@ var spriteTouched = false;
 //graphics = new PIXI.Graphics();
 
 (function(){
+    window.scrollTo(0,1);
+    document.body.style.overflow = 'hidden';
     //renderer = new PIXI.WebGLRenderer(800, 800, {backgroundColor : 0x59b4ff, transparent : false, antialias: false});
     renderer = PIXI.autoDetectRenderer(width, height ,{backgroundColor : 0x59b4ff, antialias: false});//LightCyan});//'Black'});GrassColor 0x4F8EDB
 	var canvas1 = document.getElementById("canvas1");
@@ -28,9 +31,10 @@ var spriteTouched = false;
     var initialize = function(load, res){
         loader = load;
         resources = res;
-
+        loadTextures();
+        
         const container = document.createElement("div");
-        document.body.appendChild(container);        
+        document.body.appendChild(container);
         stats = new Stats();
         container.appendChild(stats.domElement);
         stats.domElement.style.position = "absolute";
@@ -47,10 +51,12 @@ var spriteTouched = false;
         //sprite.scale.set(this.scale);
         stage.addChild(sprite);
         //stage.addChild(graphics);
-        background = new Background();
+        //background = new Background();
         //spawnRect(stage, 50,50, width/2, 50);
 
         createWorld();
+
+        verticesRecorder = new VerticesRecorder();
 
         animate();
     } // end initialize
@@ -64,7 +70,8 @@ var spriteTouched = false;
          shapes.forEach(function(s){
             s.update();
          });
-         car1.update();
+         if(car1) car1.update();
+         if(car2) car2.update();
         if(center != undefined && center != null){
             if(center.x > (-stage.x + width/2 + scope_width)){
                 stage.x = -(center.x - width/2 - scope_width);

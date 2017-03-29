@@ -1,5 +1,5 @@
-var mousePos = {x: 0, y:0, x_pct: 0, y_pct: 0, px: 0, py: 0, sx: 0, sy: 0, raw_x: 0, raw_y: 0,
-				stage_x: 0, stage_y: 0, stage_x_pct:0, stage_y_pct:0, clicked: false, touched: false, multitouched: false};
+var mousePos = {x: 0, y:0, xPct: 0, yPct: 0, px: 0, py: 0, sx: 0, sy: 0, raw_x: 0, raw_y: 0,
+				stageX: 0, stageY: 0, stageXPct:0, stageYPct:0, clicked: false, touched: false, multitouched: false};
 function getMouse(event, touchobj){
 	//console.log(touchobj)
 	mousePos.px = mousePos.x;
@@ -23,12 +23,12 @@ function getMouse(event, touchobj){
   if(stage == undefined) return;
   mousePos.x = mousePos.x / stage.scale.x;
   mousePos.y = mousePos.y / stage.scale.y;
-	mousePos.x_pct = mousePos.x / width;
-	mousePos.y_pct = mousePos.y / height;
-	mousePos.stage_x = mousePos.x - stage.x / stage.scale.x;
-	mousePos.stage_y = mousePos.y - stage.y / stage.scale.y;
-	mousePos.stage_x_pct = mousePos.stage_x / stage.width;
-	mousePos.stage_y_pct = mousePos.stage_y / stage.height;
+	mousePos.xPct = mousePos.x / width;
+	mousePos.yPct = mousePos.y / height;
+	mousePos.stageX = mousePos.x - stage.x / stage.scale.x;
+	mousePos.stageY = mousePos.y - stage.y / stage.scale.y;
+	mousePos.stageXPct = mousePos.stageX / stage.width;
+	mousePos.stageYPct = mousePos.stageY / stage.height;
 
 }
 function getMouseBasic(event){
@@ -45,7 +45,7 @@ function onMouseStart(event){
 	getMouse(event, undefined);
 
 	mousePos.touched = true;
-  
+  if(verticesRecorder.add(mousePos.xPct, mousePos.yPct)) return;
 
 }
 function onMouseMove(event){
@@ -71,10 +71,18 @@ function onTouchStart(event){
 	getMouse(event, event.changedTouches[0]);
   mousePos.touched = true;
 
+  if(verticesRecorder.add(mousePos.stageX/width, mousePos.stageY/height)) return;
   //spawnCircle(stage, mousePos.x/METER, mousePos.y/METER, 85/2);
   //spawnTri(stage, mousePos.x/METER, mousePos.y/METER, 85, 85);
   //spawnPoly(stage, mousePos.x/METER, mousePos.y/METER, 5, 85/2);
-  createPoly(getRandomInt(3,8), mousePos.stage_x, mousePos.stage_y, getRandomArbitrary(0.5, 1)*width/10);
+  createPoly(getRandomInt(3,8), mousePos.stageX, mousePos.stageY, getRandomRange(0.5, 1)*width/10);
+  //createRect(mousePos.stageX, mousePos.stageY, width/2, height/20);
+  //createRect(mousePos.stageX, mousePos.stageY, width/2, height/20, Box2D.b2_staticBody);
+  //createStaticFloor(mousePos.stageX, mousePos.stageY, width/2, height/20);
+  //createSensorRect(mousePos.stageX, mousePos.stageY, width/2, height/20);
+
+  
+
 
 } // end onTouchStart
 function onMultiTouchStart(event){
@@ -206,7 +214,7 @@ function getRngColor(r1,r2,g1,g2,b1,b2) {
     return 'rgb(' + r + ',' + g + ',' + b + ')';
 }
 // Returns a random number between min (inclusive) and max (exclusive)
-function getRandomArbitrary(min, max) {
+function getRandomRange(min, max) {
   return Math.random() * (max - min) + min;
 }
 function getRandomInt(min, max) {
@@ -432,19 +440,19 @@ function map(x, x_min, x_max, x_min_new, x_max_new){
 	return (pct * (x_max_new-x_min_new) + x_min_new);
 }
 function getRandomTop(){
-	var pos = new PVector(getRandomArbitrary(-stage.width*0.1, stage.width*1.1), -stage.height*0.1)
+	var pos = new PVector(getRandomRange(-stage.width*0.1, stage.width*1.1), -stage.height*0.1)
 	return pos;
 }
 function getRandomLeft(){
-	var pos = new PVector(-stage.width*0.1, getRandomArbitrary(-stage.height*0.1, stage.height*1.1))
+	var pos = new PVector(-stage.width*0.1, getRandomRange(-stage.height*0.1, stage.height*1.1))
 	return pos;
 }
 function getRandomRight(){
-	var pos = new PVector(stage.width*1.1, getRandomArbitrary(-stage.height*0.1, stage.height*1.1))
+	var pos = new PVector(stage.width*1.1, getRandomRange(-stage.height*0.1, stage.height*1.1))
 	return pos;
 }
 function getRandomBot(){
-	var pos = new PVector(getRandomArbitrary(-stage.width*0.1, stage.width*1.1), stage.height*1.1)
+	var pos = new PVector(getRandomRange(-stage.width*0.1, stage.width*1.1), stage.height*1.1)
 	return pos;
 }
 function getRandomBorder(){
@@ -503,6 +511,9 @@ function isBetween(p, a, b){
 function crossproduct(p, a, b){
 	return ((p.y - a.y) * (b.x - a.x) - (p.x - a.x) * (b.y - a.y));
 }
+function dot(v1, v2){
+   return (v1[0] * v2[0]) + (v1[1] * v2[1]);
+};
 
 function applyForce(force) {
     // We could add mass here if we want A = F / M
@@ -511,6 +522,19 @@ function applyForce(force) {
     //console.log(this.accel);
     this.accel.add(force);
   }
+function normaliseRadians(radians){
+    radians=radians % (2*Math.PI);
+    if(radians<0) {
+        radians+=(2*Math.PI);
+    }
+    return radians;
+};
+function vectorRotate(v, angle){
+  angle = normaliseRadians(angle);
+   return [v[0]* Math.cos(angle)-v[1]*Math.sin(angle),
+           v[0]* Math.sin(angle)+v[1]*Math.cos(angle)];
+}
+
 
 function simulateMouseEvent (event, simulatedType) {
         //console.log(event)
@@ -616,7 +640,9 @@ var wipe = function (obj){
             delete obj[p];
     }
 };
-
+function isEmpty(obj){
+  return (Object.keys(obj).length === 0 && obj.constructor === Object);
+}
 var indexOf = function(arr, item) {
   for (var i=0, len=arr.length; i!=len ; i++) {
     if (arr[i] === item) { return i }

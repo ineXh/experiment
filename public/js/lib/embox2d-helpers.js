@@ -44,6 +44,10 @@ function scaleVec2(vec, scale) {
 function scaledVec2(vec, scale) {
     return new b2Vec2(scale * vec.get_x(), scale * vec.get_y());
 }
+function b2Dot(vec1, vec2){
+    return (vec1.get_x()*vec2.get_x() + vec1.get_y()*vec2.get_y());
+}
+
 
 
 // http://stackoverflow.com/questions/12792486/emscripten-bindings-how-to-create-an-accessible-c-c-array-from-javascript

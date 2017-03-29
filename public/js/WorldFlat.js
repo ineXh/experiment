@@ -1,82 +1,117 @@
-/*var b2Vec2 = Box2D.Common.Math.b2Vec2,
-    b2BodyDef = Box2D.Dynamics.b2BodyDef,
-    b2Body = Box2D.Dynamics.b2Body,
-    b2FixtureDef = Box2D.Dynamics.b2FixtureDef,
-    b2Fixture = Box2D.Dynamics.b2Fixture,
-    b2World = Box2D.Dynamics.b2World,
-    b2MassData = Box2D.Collision.Shapes.b2MassData,
-    b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape,
-    b2CircleShape = Box2D.Collision.Shapes.b2CircleShape,
-    b2DebugDraw = Box2D.Dynamics.b2DebugDraw;*/
-/*var b2Vec2 = Box2D.b2Vec2;
-var b2BodyDef = Box2D.b2BodyDef;
-var b2World = Box2D.b2World;*/
+// https://github.com/kripken/box2d.js
+
 using(Box2D, "b2.+");
 
 var bodies = [];
 
+
 function createWorld() {
-	/*if ( world != null )	Box2D.destroy(world);
-	 world = new b2World( new b2Vec2(0.0, -10.0) );
-	 mouseJointGroundBody = world.CreateBody( new b2BodyDef() );
-	 createGround(world);*/
-	var gravity = new Box2D.b2Vec2(0.0, 10.0);
+	this.bgSprite = buttonCreate(PIXI.Texture.fromFrame("trackA"),
+                     width/2, height/2, this.width);
+    stage.addChild(this.bgSprite);
+    
+	var gravity = new Box2D.b2Vec2(0.0, 0.0);
     world = new Box2D.b2World(gravity);
-    //createBound();
-    createGround();
-    /*var bd_ground = new Box2D.b2BodyDef();
-    ground = world.CreateBody(bd_ground);
-    var shape0 = new Box2D.b2EdgeShape();
-    shape0.Set(new Box2D.b2Vec2(-40.0, -6), new Box2D.b2Vec2(40.0, -6));
-	ground.CreateFixture(shape0, 0.0);
+    
+    createStaticFloor(width/2,0,width,height/20);
+    createStaticFloor(width/2,height,width,height/20);
+    createStaticFloor(0,height/2,height/20,height);
+    createStaticFloor(width,height/2,height/20,height);
+
+    /*for(var i = 0; i < StageData[0].out.length; i++){
+        createField(StageData[0].out[i]);
+    } */   
+    createField(StageData[0].out);
+
+	car1 = new CarFlat(width/2, height*0.2);
+    car1.init(0,0, stage);
+
+    //car2 = new Car2D(width/2, height*0.3);
+    
+
+
+    //car2 = new CarFlat(width/2, height/2);
+    //car2.init(0,0, stage);
+
+    //createSensorRect(width*0.5, height*0.3,width/20,height/5);
+    //trigger = new TrackTrigger(width*0.5, height*0.2, width*0.5, height*0.3);
+     //createRect(350, 100, 35, 100);
+    
+    //createCar(0, 0);
+	//stage.x = 200;
+
+    listener = new Box2D.JSContactListener();
+    listener.BeginContact = function (contactPtr) {
+        //console.log('begin contact')
+        var contact = Box2D.wrapPointer( contactPtr, b2Contact );
+        var fixtureA = contact.GetFixtureA();
+        var fixtureB = contact.GetFixtureB();
+
+        if(fixtureA.shape.boxObjectType == BoxObjectType.Car && fixtureB.shape.boxObjectType == BoxObjectType.Field){
+            fixtureA.shape.parent.offRoad = true;
+            fixtureA.shape.parent.colliders[BoxObjectType.Field][fixtureB.e] = fixtureB;
+            fixtureB.shape.setRed();
+        }else if(fixtureB.shape.boxObjectType == BoxObjectType.Car && fixtureA.shape.boxObjectType == BoxObjectType.Field){
+            fixtureB.shape.parent.offRoad = true;
+            fixtureB.shape.parent.colliders[BoxObjectType.Field][fixtureA.e] = fixtureA;
+            fixtureA.shape.setRed();
+        }        
+
+        // now do what you wish with the fixtures
+    }
+
+    // Empty implementations for unused methods.
+    listener.EndContact = function(contactPtr) {
+        //console.log('end contact');
+        var contact = Box2D.wrapPointer( contactPtr, b2Contact );
+        var fixtureA = contact.GetFixtureA();
+        var fixtureB = contact.GetFixtureB();
+
+        if(fixtureA.shape.boxObjectType == BoxObjectType.Car && fixtureB.shape.boxObjectType == BoxObjectType.Field){
+            delete fixtureA.shape.parent.colliders[BoxObjectType.Field][fixtureB.e]
+            fixtureB.shape.setRandomClr();
+        }else if(fixtureB.shape.boxObjectType == BoxObjectType.Car && fixtureA.shape.boxObjectType == BoxObjectType.Field){
+            delete fixtureB.shape.parent.colliders[BoxObjectType.Field][fixtureA.e]
+            fixtureA.shape.setRandomClr();
+        }
+    };
+    listener.PreSolve = function() {};
+    listener.PostSolve = function() {};
+
+    world.SetContactListener( listener );
+} // end createWorld
+
+
+
+
+function createCar(x, y){
 	
-	*/
-	//createStaticFloor();
-	var side = width/25;
-	for(var i = 0; i < 2; i++){
-		//spawnRect(stage, width, -, side, side);
-		createPoly(3,width*5, -i*side-height*0.25, side, side);
-		//createBall(Math.random()*width, -getRandomInt(50,height/2), getRandomArbitrary(0.5, 1)*width/20);
-		//createRect(Math.random()*width, -getRandomInt(50,height/2), getRandomArbitrary(0.5, 1)*width/10, getRandomArbitrary(0.5, 1)*height/10);
-		//createPoly(getRandomInt(3,8), Math.random()*width, -getRandomInt(50,height/2), getRandomArbitrary(0.5, 1)*width/10);
-	}
-	//createShape1(Math.random()*width, -getRandomInt(50,height/2));
-	//createCar(width/2, height/2);
-	car1 = new Car();
-	stage.x = 200;
 }
 
-
-function createShape1(x, y){
-	x = x/METER;
-	y = y/METER;
-	var ZERO = new b2Vec2(0, 0);
+function createShape(x, y, points){
+    x = x/METER;
+    y = y/METER;
+    var ZERO = new b2Vec2(0, 0);
     var temp = new b2Vec2(0, 0);
-
-    var bd	= new b2BodyDef();
-    bd.set_type(Box2D.b2_dynamicBody);
+    var bd  = new b2BodyDef();
+    bd.set_type(Box2D.b2_dynamicBody); //b2_dynamicBody //b2_staticBody
     var body = world.CreateBody(bd);
-    
-    var points = [	{x: -1*METER	, y: -1*METER},
-    				{x: 3*METER		, y: -1*METER},
-    				{x: 0*METER		, y: 1*METER},    				
-    			 ];
 
     var verts = [];    
     for(var i = 0; i < points.length; i++){
-    	verts.push(new b2Vec2( points[i].x/METER, points[i].y/METER) );
-    }    
+        verts.push(new b2Vec2( points[i].x/METER, points[i].y/METER) );
+    }
 
     var shape = createPolygonShape(verts);
     
     var fixtureDef = new b2FixtureDef();
-	fixtureDef.set_density( 1 );
-	fixtureDef.set_friction( 1 );
-	fixtureDef.set_restitution(0.4);
-	fixtureDef.set_shape( shape );
-	fixture = body.CreateFixture( fixtureDef );
-	
-    temp.Set(x, y);
+    fixtureDef.set_density( 1 );
+    fixtureDef.set_friction( 1 );
+    fixtureDef.set_restitution(0.4);
+    fixtureDef.set_shape( shape );
+    fixture = body.CreateFixture( fixtureDef );
+    
+    temp.Set(x, y);//16*(Math.random()-0.5), 4.0 + 2.5*index);
     body.SetTransform(temp, 0.0);
     body.SetLinearVelocity(ZERO);
     body.SetAwake(1);
@@ -86,7 +121,69 @@ function createShape1(x, y){
     //shape = spawnTri(stage, 25, 5, 85, 85);
     shape = spawnVertices(stage, 0, 0, points);
     shape.body = body;
+    shape.fixture = fixture;
+    fixture.shape = shape;
+    return shape
 }
+function createField(verticesArray){
+    x = 0;//x/METER;
+    y = 0;//y/METER;
+    var ZERO = new b2Vec2(0, 0);
+    var temp = new b2Vec2(0, 0);
+
+    var bd  = new b2BodyDef();
+    bd.set_type(Box2D.b2_staticBody); //b2_dynamicBody //b2_staticBody
+    var body = world.CreateBody(bd);
+    
+    var points = [];
+    for(var i = 0; i < verticesArray.length; i++){
+        vertices = verticesArray[i];
+        points[i] = [];
+        for(var j = 0; j < vertices.length; j=j+2){
+            points[i].push({x: vertices[j]*width, y: vertices[j+1]*height});
+        }
+    }
+
+    var verts = [];    
+    for(var i = 0; i < points.length; i++){
+        verts.length = 0;
+        for(var j = 0; j < points[i].length; j++){
+            verts.push(new b2Vec2( points[i][j].x/METER, points[i][j].y/METER) );    
+        }
+        var shape = createPolygonShape(verts);
+        //var shape = new b2EdgeShape();
+        
+        var fixtureDef = new b2FixtureDef();
+        fixtureDef.set_shape( shape );
+        fixtureDef.set_density( 1 );
+        fixtureDef.set_friction( 1 );
+        fixtureDef.set_restitution(0.4);
+        fixtureDef.set_isSensor(true);
+           
+        fixture = body.CreateFixture( fixtureDef );    
+
+        usedForDebug = true;
+        shape = spawnVertices(stage, 0, 0, points[i], usedForDebug);
+        shape.body = body;
+        shape.fixture = fixture;
+        fixture.shape = shape;
+        fixture.shape.boxObjectType = BoxObjectType.Field;
+    }        
+    
+    temp.Set(x, y);
+    body.SetTransform(temp, 0.0);
+    body.SetLinearVelocity(ZERO);
+    body.SetAwake(1);
+    body.SetActive(1);
+
+    bodies.push(body);
+
+    //spawnLine(stage, points);
+    //shape = spawnTri(stage, 25, 5, 85, 85);
+    
+}
+
+
 function createGround(){
 	var bd_ground = new b2BodyDef();
 	bd_ground.set_type(Box2D.b2_staticBody);
@@ -154,7 +251,12 @@ function createBound() {
 
 }
 
-function createStaticFloor(){
+function createStaticFloor(x,y,w,h){
+    x = x/METER;
+    y = y/METER;
+    w = w/METER;
+    h = h/METER;
+
 	var ZERO = new b2Vec2(0, 0);
     var temp = new b2Vec2(0, 0);
 
@@ -163,23 +265,31 @@ function createStaticFloor(){
     var body = world.CreateBody(bd);
 
 	var shape = new Box2D.b2PolygonShape();
-    shape.SetAsBox(width/2 /2/METER, height/10 /2/METER);
+    shape.SetAsBox(w/2, h/2);
 
     var fixtureDef = new b2FixtureDef();
     fixtureDef.set_density( 0 );
-    fixtureDef.set_shape( shape );
+    fixtureDef.set_shape( shape );    
     fixture = body.CreateFixture( fixtureDef );
 
-    temp.Set(width/2/METER, height/2/METER);//16*(Math.random()-0.5), 4.0 + 2.5*index);
+    temp.Set(x, y);//16*(Math.random()-0.5), 4.0 + 2.5*index);
     body.SetTransform(temp, 0.0);
     body.SetLinearVelocity(ZERO);
     body.SetAwake(1);
     body.SetActive(1);
 
     bodies.push(body);
-    shape = spawnRect(stage, 25, 5, width/2, height/10);
+    shape = spawnRect(stage, x, y, w*METER, h*METER);    
     shape.body = body;
-
+    shape.fixture = fixture;
+    fixture.shape = shape;
+    shape.fixtureDef = fixtureDef;
+    return shape;
+}
+function createSensorRect(x,y,w,h){
+    shape = createStaticFloor(x,y,w,h);        
+    shape.fixture.SetSensor(true);
+    return shape;
 }
 
 function createBall(x, y, r){//world, x, y) {
@@ -212,7 +322,7 @@ function createBall(x, y, r){//world, x, y) {
     shape.body = body;
 }
 
-function createRect(x, y, w, h){
+function createRect(x, y, w, h, box2dtype, usedForDebug){
 	x = x/METER;
 	y = y/METER;
 	w = w/METER;
@@ -222,7 +332,12 @@ function createRect(x, y, w, h){
     var temp = new b2Vec2(0, 0);
 
     var bd	= new b2BodyDef();
-    bd.set_type(Box2D.b2_dynamicBody);
+    if(box2dtype){
+        bd.set_type(box2dtype);
+    }else{
+        bd.set_type(Box2D.b2_dynamicBody);    
+    }
+        
     var body = world.CreateBody(bd);
     var shape = new Box2D.b2PolygonShape();    	
     shape.SetAsBox(w/2, h/2);
@@ -230,18 +345,26 @@ function createRect(x, y, w, h){
 	fixtureDef.set_density( 1 );
 	fixtureDef.set_friction( 1 );
 	fixtureDef.set_restitution(0.4);
+
+
 	fixtureDef.set_shape( shape );
 	fixture = body.CreateFixture( fixtureDef );
 	
     temp.Set(x, y);//16*(Math.random()-0.5), 4.0 + 2.5*index);
     body.SetTransform(temp, 0.0);
     body.SetLinearVelocity(ZERO);
+
     body.SetAwake(1);
     body.SetActive(1);
 
     bodies.push(body);
-    shape = spawnRect(stage, 0, 0, w*METER, h*METER);
+
+    if(usedForDebug == undefined) usedForDebug = false;
+    shape = spawnRect(stage, 0, 0, w*METER, h*METER, usedForDebug);
     shape.body = body;
+    shape.fixture = fixture;
+    fixture.shape = shape;
+    return shape;
 }
 
 function createPoly(numVerts, x, y, r){
@@ -288,13 +411,16 @@ function createPoly(numVerts, x, y, r){
     //shape = spawnTri(stage, 25, 5, 85, 85);
     shape = spawnPoly(stage, 0, 0, numVerts, r*METER);
     shape.body = body;
+    shape.fixture = fixture;
+    fixture.shape = shape;
+    return shape;
 }
 
 function step(timestamp) {
     
     /*if ( currentTest && currentTest.step ) 
         currentTest.step();*/
-    
+    //console.log('step')
     if ( ! showStats ) {
         world.Step(1/60, 2, 2);
         draw();
@@ -312,6 +438,7 @@ function step(timestamp) {
         updateStats();
         statusUpdateCounter = 0;
     }
+
 }
 
 function draw(){
