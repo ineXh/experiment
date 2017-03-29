@@ -38,7 +38,7 @@ CarFlat.prototype = {
         this.max_steer_angle = 20;
 
         this.offRoad = false;
-        this.offRoadFactor = 0.95;
+        this.offRoadFactor = 0.99;
         this.colliders = {};
         this.colliders[BoxObjectType.Field] = {};
 
@@ -47,7 +47,8 @@ CarFlat.prototype = {
         this.wheelWidth = this.width/5;
         this.wheelHeight = this.height/4;
 
-		this.shape = createRect(x,y, this.width, this.height);
+        useForDebug = true;
+		this.shape = createRect(x,y, this.width, this.height, Box2D.b2_dynamicBody, useForDebug);
         this.shape.boxObjectType = BoxObjectType.Car;
         this.shape.parent = this;
 

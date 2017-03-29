@@ -26,11 +26,17 @@ function createWorld() {
 	car1 = new CarFlat(width/2, height*0.3);
     car1.init(0,0, stage);
 
+    car2 = new Car2D(width/2, height*0.3);
+    
+
+
     //car2 = new CarFlat(width/2, height/2);
     //car2.init(0,0, stage);
 
-    //createTrackTrigger(width*0.5, height*0.3,width/20,height/5);
-
+    //createSensorRect(width*0.5, height*0.3,width/20,height/5);
+    //trigger = new TrackTrigger(width*0.5, height*0.2, width*0.5, height*0.3);
+     //createRect(350, 100, 35, 100);
+    
     //createCar(0, 0);
 	//stage.x = 200;
 
@@ -73,13 +79,52 @@ function createWorld() {
     listener.PostSolve = function() {};
 
     world.SetContactListener( listener );
-}
+} // end createWorld
+
+
 
 
 function createCar(x, y){
 	
 }
 
+function createShape(x, y, points){
+    x = x/METER;
+    y = y/METER;
+    var ZERO = new b2Vec2(0, 0);
+    var temp = new b2Vec2(0, 0);
+    var bd  = new b2BodyDef();
+    bd.set_type(Box2D.b2_dynamicBody); //b2_dynamicBody //b2_staticBody
+    var body = world.CreateBody(bd);
+
+    var verts = [];    
+    for(var i = 0; i < points.length; i++){
+        verts.push(new b2Vec2( points[i].x/METER, points[i].y/METER) );
+    }
+
+    var shape = createPolygonShape(verts);
+    
+    var fixtureDef = new b2FixtureDef();
+    fixtureDef.set_density( 1 );
+    fixtureDef.set_friction( 1 );
+    fixtureDef.set_restitution(0.4);
+    fixtureDef.set_shape( shape );
+    fixture = body.CreateFixture( fixtureDef );
+    
+    temp.Set(x, y);//16*(Math.random()-0.5), 4.0 + 2.5*index);
+    body.SetTransform(temp, 0.0);
+    body.SetLinearVelocity(ZERO);
+    body.SetAwake(1);
+    body.SetActive(1);
+
+    bodies.push(body);
+    //shape = spawnTri(stage, 25, 5, 85, 85);
+    shape = spawnVertices(stage, 0, 0, points);
+    shape.body = body;
+    shape.fixture = fixture;
+    fixture.shape = shape;
+    return shape
+}
 function createField(verticesArray){
     x = 0;//x/METER;
     y = 0;//y/METER;
@@ -277,7 +322,7 @@ function createBall(x, y, r){//world, x, y) {
     shape.body = body;
 }
 
-function createRect(x, y, w, h, box2dtype){
+function createRect(x, y, w, h, box2dtype, usedForDebug){
 	x = x/METER;
 	y = y/METER;
 	w = w/METER;
@@ -292,8 +337,7 @@ function createRect(x, y, w, h, box2dtype){
     }else{
         bd.set_type(Box2D.b2_dynamicBody);    
     }
-    
-    
+        
     var body = world.CreateBody(bd);
     var shape = new Box2D.b2PolygonShape();    	
     shape.SetAsBox(w/2, h/2);
@@ -314,7 +358,9 @@ function createRect(x, y, w, h, box2dtype){
     body.SetActive(1);
 
     bodies.push(body);
-    shape = spawnRect(stage, 0, 0, w*METER, h*METER);
+
+    if(usedForDebug == undefined) usedForDebug = false;
+    shape = spawnRect(stage, 0, 0, w*METER, h*METER, usedForDebug);
     shape.body = body;
     shape.fixture = fixture;
     fixture.shape = shape;
@@ -365,6 +411,9 @@ function createPoly(numVerts, x, y, r){
     //shape = spawnTri(stage, 25, 5, 85, 85);
     shape = spawnPoly(stage, 0, 0, numVerts, r*METER);
     shape.body = body;
+    shape.fixture = fixture;
+    fixture.shape = shape;
+    return shape;
 }
 
 function step(timestamp) {

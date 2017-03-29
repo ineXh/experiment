@@ -50,16 +50,20 @@ Shape.prototype = {
 		this.boxObjectType = BoxObjectType.Invalid;
 	},
 	update: function(){
-		//this.move();
-		if(this.usedForDebug && !debug) return;
+		//this.move();		
 		if(this.body != null){
 			this.pos.x = this.body.GetPosition().get_x()*METER;
 			this.pos.y = this.body.GetPosition().get_y()*METER;
 			if(isNaN(this.pos.x)) debugger;
+			if(this.usedForDebug && !debug) return;
 			this.graphics.x = this.pos.x;
 			this.graphics.y = this.pos.y;
 			this.graphics.rotation = this.body.GetAngle();
 		}else{this.move();}
+	},
+	setAngle: function(angle){
+		if(this.body)
+			this.body.SetTransform(this.body.GetPosition(), angle);
 	},
 	move: function(time){
 		this.vel.add(this.accel);
