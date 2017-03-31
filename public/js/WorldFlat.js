@@ -3,8 +3,13 @@
 using(Box2D, "b2.+");
 
 var bodies = [];
+var cars = [];
 
-
+function spawnCar(){
+    car = new CarFlat(width/2, height*0.2);
+    car.init(0,0, stage);
+    cars.push(car);
+}
 function createWorld() {
 	this.bgSprite = buttonCreate(PIXI.Texture.fromFrame("trackA"),
                      width/2, height/2, this.width);
@@ -25,7 +30,7 @@ function createWorld() {
 
 	car1 = new CarFlat(width/2, height*0.2);
     car1.init(0,0, stage);
-
+    cars.push(car1);
     //car2 = new Car2D(width/2, height*0.3);
     
 

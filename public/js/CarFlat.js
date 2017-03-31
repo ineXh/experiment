@@ -236,7 +236,10 @@ CarFlat.prototype = {
 
         this.driftLine.moveTo(this.backWheel.x, this.backWheel.y);
         this.driftLine.lineTo(this.backWheel.x + this.vel.x, this.backWheel.y + this.vel.y);
-
+        if(time.count%100 == 0){
+            this.driftLine.clear();
+            this.driftLine.lineStyle(5, 0x00, 1);
+        }
         //this.carContainer.rotation = this.carHeading + PI/2;
         
         //this.shape.body.SetFixedRotation(this.carContainer.rotation);

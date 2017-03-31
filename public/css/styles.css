@@ -13,3 +13,41 @@ th, td {
     padding: 5px;
     text-align: left;    
 }
+h2{
+  margin: 2%;
+  font-size: 28px;
+}
+
+#fb-login{
+  position: absolute;
+  bottom: 55%;
+  right: 5%;
+}
+#gamemessage{
+  position: absolute;
+  left: 10%; top: 60%;
+}
+.gMsg{
+  color: black;
+  white-space: nowrap;
+  font-size: 20px;
+  line-height: normal;
+  margin: 10px 0 0 10px;
+
+  overflow: hidden;
+  width: 30em;
+  animation: type 2s steps(60, end);
+}
+
+@media all and (max-height: 600px) {
+  body {
+    font-size: 12px;
+  }
+  h1{
+    font-size: 20px;
+  }
+  h2{
+    margin: 1%;
+    font-size: 18px;
+  }
+}

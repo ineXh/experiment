@@ -9,6 +9,8 @@ var shapes = [];
 var canvas;
 var width = 700;
 var height = 500;
+var stageWidth = width;
+var stageHeight = height;
 var scope_width = width*0.15;
 var scope_height = height*0.25;
 var center = null;
@@ -58,20 +60,33 @@ var spriteTouched = false;
 
         verticesRecorder = new VerticesRecorder();
 
+        communication = new Communications();
+        communication.connect();
+
+        addmsg('❤❤❤')
         animate();
     } // end initialize
 
     loadAssets(initialize);
 
     var update = function(){
+        var now = Date.now(),
+         dt  = (now - lastTime),
+         t   = (now - startTime);
+        time.t = t;
+        time.dt = dt;
+        time.count = count++;
+        lastTime = now;
+
         stats.update();
         updateQueue.update();
          step();
          shapes.forEach(function(s){
             s.update();
          });
-         if(car1) car1.update();
-         if(car2) car2.update();
+         cars.forEach(function(car){
+            car.update();
+         })
         if(center != undefined && center != null){
             if(center.x > (-stage.x + width/2 + scope_width)){
                 stage.x = -(center.x - width/2 - scope_width);
